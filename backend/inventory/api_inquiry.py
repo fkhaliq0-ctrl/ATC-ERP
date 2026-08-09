@@ -2,6 +2,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Inquiry
+from .whatsapp_service import WhatsAppService
 
 class InquirySerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,19 +11,24 @@ class InquirySerializer(serializers.ModelSerializer):
 
 @api_view(['POST'])
 def create_inquiry(request):
-    # Map frontend field names to model field names
-    data = request.data.copy()
-    
-    # Map customerPhone to customer_phone
-    if 'customerPhone' in data:
-        data['customer_phone'] = data.pop('customerPhone')
-    
-    # Map customerName to customer_name
-    if 'customerName' in data:
-        data['customer_name'] = data.pop('customerName')
-    
-    serializer = InquirySerializer(data=data)
+    serializer = InquirySerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        inquiry = serializer.save()
+        
+        # Send WhatsApp message
+        whatsapp = WhatsAppService()
+        message = whatsapp.build_message(inquiry)
+        
+        # Send the message
+        message_sent = whatsapp.send_whatsapp_message(
+            inquiry.customer_phone,
+            message
+        )
+        
+        return Response({
+            'message': 'Inquiry created successfully',
+            'inquiry': serializer.data,
+            'whatsapp_sent': message_sent
+        }, status=status.HTTP_201_CREATED)
+    
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
