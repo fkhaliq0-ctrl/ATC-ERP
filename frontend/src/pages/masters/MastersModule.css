@@ -1,0 +1,75 @@
+﻿.masters-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.masters-container h1 {
+  font-size: 28px;
+  color: #1e1e2f;
+  margin-bottom: 8px;
+}
+
+.masters-container p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.masters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.master-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  text-decoration: none;
+  color: #1e1e2f;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #eee;
+  transition: 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.master-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  border-color: #4a9eff;
+}
+
+.master-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.master-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e1e2f;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .masters-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .master-card {
+    padding: 16px 12px;
+  }
+
+  .master-icon {
+    font-size: 32px;
+  }
+
+  .master-name {
+    font-size: 14px;
+  }
+}

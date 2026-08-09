@@ -1,0 +1,154 @@
+﻿/* ATC Right Sidebar Layout */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.atc-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: #f4f6f9;
+}
+
+/* SIDEBAR */
+.atc-sidebar {
+  width: 220px;
+  background: #1e1e2f;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  flex-shrink: 0;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  order: 2;
+}
+
+.atc-brand {
+  padding: 0 16px 20px 16px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 16px;
+}
+
+.atc-logo {
+  font-size: 24px;
+  display: block;
+}
+
+.atc-name {
+  font-size: 20px;
+  font-weight: bold;
+  display: block;
+}
+
+.atc-sub {
+  font-size: 11px;
+  color: #aaa;
+  display: block;
+}
+
+.atc-menu {
+  list-style: none;
+  padding: 0 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Push Masters to the bottom */
+.atc-menu li:last-child {
+  margin-top: auto;
+}
+
+.atc-menu li {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #ccc;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.atc-menu li:hover {
+  background: #2a2a3f;
+  color: #fff;
+}
+
+.atc-menu .active {
+  background: #2a2a3f;
+  color: #fff;
+  border-left: 3px solid #4a9eff;
+}
+
+.atc-menu a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+.menu-toggle {
+  cursor: pointer;
+  display: block;
+}
+
+.atc-submenu {
+  list-style: none;
+  padding-left: 16px;
+  margin-top: 4px;
+}
+
+.atc-submenu li {
+  font-size: 13px;
+  padding: 4px 0;
+  color: #aaa;
+  font-weight: 400;
+}
+
+.atc-submenu li:hover {
+  color: #fff;
+}
+
+.atc-submenu a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+/* MAIN CONTENT */
+.atc-main {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+  background: #f4f6f9;
+  order: 1;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .atc-container {
+    flex-direction: column;
+  }
+
+  .atc-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    position: relative;
+    padding: 10px 0;
+    flex-shrink: 0;
+    order: 1;
+  }
+
+  .atc-main {
+    padding: 16px;
+    height: auto;
+    min-height: 40vh;
+    order: 2;
+  }
+}

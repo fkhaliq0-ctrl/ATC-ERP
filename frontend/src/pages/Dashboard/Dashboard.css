@@ -1,0 +1,149 @@
+﻿.dashboard-container {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-header {
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.dashboard-header p {
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+/* Menu Link Card */
+.menu-link-card {
+  background: linear-gradient(135deg, #1e1e2f, #2a2a3f);
+  color: #fff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  border: 1px solid #333;
+}
+
+.menu-link-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.menu-link-card p {
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.menu-link-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.menu-link-box input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 14px;
+}
+
+.menu-link-box input:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.menu-link-box button {
+  padding: 10px 20px;
+  background: #4a9eff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.menu-link-box button:hover {
+  background: #3a8aee;
+}
+
+.menu-link-card .btn-primary {
+  display: inline-block;
+  padding: 10px 24px;
+  background: #4a9eff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  text-decoration: none;
+}
+
+.menu-link-card .btn-primary:hover {
+  background: #3a8aee;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+  transition: 0.3s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  transform: translateY(-4px);
+}
+
+.stat-card h3 {
+  font-size: 16px;
+  color: #34495e;
+  margin-bottom: 10px;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: bold;
+  color: #2980b9;
+  margin: 5px 0;
+}
+
+.stat-card small {
+  color: #95a5a6;
+}
+
+.recent-section {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.recent-section h2 {
+  font-size: 20px;
+  color: #2c3e50;
+}
+
+@media (max-width: 600px) {
+  .menu-link-box {
+    flex-direction: column;
+  }
+}
