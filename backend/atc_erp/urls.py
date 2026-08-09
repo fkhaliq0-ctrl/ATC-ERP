@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 def home(request):
     return HttpResponse("""
@@ -67,8 +68,8 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('inventory.urls')),
-    path('agent/', home),
-    path('menu/', home),
-    path('dashboard/', home),
+    path('agent/', home),  # Will fix this to serve React later
+    path('menu/', home),   # Will fix this to serve React later
+    path('dashboard/', home),  # Will fix this to serve React later
     path('', home, name='home'),
 ]

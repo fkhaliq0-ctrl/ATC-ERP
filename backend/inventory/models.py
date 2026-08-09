@@ -114,7 +114,7 @@ class PurchaseInvoice(models.Model):
     invoice_number = models.CharField(max_length=50, unique=True)
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
     invoice_date = models.DateField()
-    due_date = models.DateField()
+    due_date = models.DateField(blank=True, null=True)  # ← Made nullable
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=INVOICE_STATUS, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -168,7 +168,7 @@ class SalesInvoice(models.Model):
     invoice_number = models.CharField(max_length=50, unique=True)
     sales_order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE)
     invoice_date = models.DateField()
-    due_date = models.DateField()
+    due_date = models.DateField(blank=True, null=True)  # ← Made nullable
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=INVOICE_STATUS, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -195,8 +195,8 @@ class Payment(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateField()
-    method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
-    type = models.CharField(max_length=10, choices=PAYMENT_TYPE)
+    method = models.CharField(max_length=20, choices=PAYMENT_METHODS, default='Cash')  # ← Added default
+    type = models.CharField(max_length=10, choices=PAYMENT_TYPE, default='Received')  # ← Added default
     reference_number = models.CharField(max_length=50, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -245,23 +245,14 @@ class Inquiry(models.Model):
         ('Cancelled', 'Cancelled'),
     ]
 
-    # Agent fields
     agent_name = models.CharField(max_length=100, blank=True, null=True)
-    
-    # Customer fields
     religion = models.CharField(max_length=2, choices=RELIGION_CHOICES, blank=True, null=True)
     gender = models.CharField(max_length=4, choices=GENDER_CHOICES, blank=True, null=True)
     customer_name = models.CharField(max_length=200, blank=True, null=True)
     customer_phone = models.CharField(max_length=15)
     customer_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='IICC')
-    
-    # Greeting
     greeting_used = models.TextField(blank=True, null=True)
-    
-    # Status
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='New')
-    
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -273,11 +264,8 @@ class Inquiry(models.Model):
 
 # ========== Menu Submission Model ==========
 class MenuSubmission(models.Model):
-    # Customer Info
     customer_name = models.CharField(max_length=200, blank=True, null=True)
     customer_phone = models.CharField(max_length=15)
-    
-    # Event Details
     gathering_type = models.CharField(max_length=50, blank=True, null=True)
     venue = models.CharField(max_length=500, blank=True, null=True)
     pax = models.IntegerField(blank=True, null=True)
@@ -286,16 +274,12 @@ class MenuSubmission(models.Model):
     pre_wedding_type = models.CharField(max_length=100, blank=True, null=True)
     pre_wedding_venue = models.CharField(max_length=500, blank=True, null=True)
     event_date = models.DateField(blank=True, null=True)
-    
-    # Menu Selections (stored as JSON)
     menu_selections = models.JSONField(default=dict, blank=True)
-    
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"Menu #{self.id} - {self.customer_name or 'Unknown'}"
-    
+
     class Meta:
         ordering = ['-created_at']

@@ -2,7 +2,7 @@
 from .models import (
     Item, Customer, Vendor, Tax, Unit, Warehouse,
     PurchaseOrder, PurchaseInvoice, SalesOrder, SalesInvoice,
-    Payment, StockTransaction, GoodsReceipt, Inquiry
+    Payment, StockTransaction, GoodsReceipt, Inquiry, MenuSubmission
 )
 
 @admin.register(Item)
@@ -60,7 +60,6 @@ class StockTransactionAdmin(admin.ModelAdmin):
 class GoodsReceiptAdmin(admin.ModelAdmin):
     list_display = ('id', 'purchase_order', 'receipt_date', 'received_by')
 
-# Register Inquiry model
 @admin.register(Inquiry)
 class InquiryAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer_name', 'customer_phone', 'customer_type', 'religion', 'status', 'created_at')
@@ -83,3 +82,10 @@ class InquiryAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+@admin.register(MenuSubmission)
+class MenuSubmissionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'customer_name', 'customer_phone', 'event_date', 'created_at')
+    list_filter = ('gathering_type', 'pre_wedding')
+    search_fields = ('customer_name', 'customer_phone')
+    readonly_fields = ('created_at', 'updated_at')
