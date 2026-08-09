@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+from django.shortcuts import render
 
 def home(request):
     return HttpResponse("""
@@ -17,8 +17,8 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('inventory.urls')),
-    path('agent/', lambda request: HttpResponseRedirect('/agent/')),
-    path('menu/', lambda request: HttpResponseRedirect('/menu/')),
-    path('dashboard/', lambda request: HttpResponseRedirect('/dashboard/')),
+    path('agent/', home),  # Show home page temporarily
+    path('menu/', home),   # Show home page temporarily
+    path('dashboard/', home),  # Show home page temporarily
     path('', home, name='home'),
 ]
