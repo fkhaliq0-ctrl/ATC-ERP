@@ -142,24 +142,28 @@ CORS_ALLOW_HEADERS = [
 ]
 
 # ========== WhatsApp / Twilio Settings ==========
-# You need to sign up for Twilio to get these credentials
-# Visit: https://www.twilio.com/try-twilio
 TWILIO_ACCOUNT_SID = ''  # Your Twilio Account SID
 TWILIO_AUTH_TOKEN = ''   # Your Twilio Auth Token
-TWILIO_WHATSAPP_NUMBER = ''  # Your Twilio WhatsApp number (e.g., +14155238886)# ========== Auto-create Superuser on Deploy ==========
+TWILIO_WHATSAPP_NUMBER = ''  # Your Twilio WhatsApp number
+
+# ========== Auto-create Superuser ==========
 import os
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-if os.environ.get('DJANGO_SUPERUSER_USERNAME') and os.environ.get('DJANGO_SUPERUSER_PASSWORD'):
-    try:
-        if not User.objects.filter(username=os.environ.get('DJANGO_SUPERUSER_USERNAME')).exists():
+superuser_username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
+superuser_password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+superuser_email = os.environ.get('DJANGO_SUPERUSER_EMAIL', '')
+
+if superuser_username and superuser_password:
+    if not User.objects.filter(username=superuser_username).exists():
+        try:
             User.objects.create_superuser(
-                username=os.environ.get('DJANGO_SUPERUSER_USERNAME'),
-                email=os.environ.get('DJANGO_SUPERUSER_EMAIL', ''),
-                password=os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+                username=superuser_username,
+                email=superuser_email,
+                password=superuser_password
             )
-            print("✅ Superuser created successfully!")
-    except Exception as e:
-        print(f"⚠️ Could not create superuser: {e}")
+            print(f"✅ Superuser '{superuser_username}' created successfully!")
+        except Exception as e:
+            print(f"⚠️ Could not create superuser: {e}")
