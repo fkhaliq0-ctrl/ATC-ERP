@@ -11,7 +11,7 @@ def home(request):
         <p><a href='/dashboard/'>📊 Dashboard</a></p>
         <p><a href='/admin/'>🔐 Admin Panel</a></p>
         <hr>
-        <p style='color: green;'>✅ Your ATC ERP is live!</p>
+        <p style='color: green;'>✅ Your ATC ERP is LIVE!</p>
     """)
 
 urlpatterns = [
