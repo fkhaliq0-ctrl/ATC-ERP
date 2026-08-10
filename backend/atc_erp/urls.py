@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.views.generic import TemplateView
+import os
 
 def home(request):
     return HttpResponse("""
@@ -65,11 +66,25 @@ def home(request):
         </html>
     """)
 
+def serve_react(request, path=''):
+    index_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'index.html')
+    try:
+        with open(index_path, 'r') as f:
+            return HttpResponse(f.read())
+    except FileNotFoundError:
+        return HttpResponse("""
+            <h1>React App Not Found</h1>
+            <p>Please build the frontend: <code>cd frontend && npm run build</code></p>
+            <p>Then copy to: <code>backend/static/</code></p>
+        """, status=404)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('inventory.urls')),
-    path('agent/', home),  # Will fix this to serve React later
-    path('menu/', home),   # Will fix this to serve React later
-    path('dashboard/', home),  # Will fix this to serve React later
     path('', home, name='home'),
+]
+
+# Catch-all route for React app
+urlpatterns += [
+    re_path(r'^(?P<path>.*)/$', serve_react),
 ]
