@@ -48,7 +48,7 @@ const AgentPage = () => {
       greeting += ` Dear Sir/Madam`;
     }
 
-    // Create payload with CORRECT field names
+    // Create payload with CORRECT snake_case field names
     const payload = {
       religion: formData.religion,
       gender: formData.gender,
@@ -77,7 +77,12 @@ const AgentPage = () => {
         setSuccess(true);
         console.log('✅ Inquiry saved successfully!');
       } else {
-        setError(data.message || data.errors || 'Failed to save inquiry.');
+        let errorMsg = data.message || 'Failed to save inquiry.';
+        if (data.errors) {
+          errorMsg += ' - ' + JSON.stringify(data.errors);
+        }
+        console.error('❌ API Error:', errorMsg);
+        setError(errorMsg);
       }
     } catch (err) {
       console.error('❌ Network error:', err);

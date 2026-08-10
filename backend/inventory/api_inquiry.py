@@ -16,6 +16,7 @@ class InquirySerializer(serializers.ModelSerializer):
             'customer_type': {'required': False, 'allow_null': True},
             'greeting_used': {'required': False, 'allow_null': True},
             'status': {'required': False, 'allow_null': True},
+            'agent_name': {'required': False, 'allow_null': True},
         }
 
 @api_view(['POST'])
@@ -28,14 +29,9 @@ def create_inquiry(request):
         
         data = request.data.copy()
         
-        # Map religion values if needed
-        if data.get('religion') == 'Muslim':
-            data['religion'] = 'M'
-        elif data.get('religion') == 'Non-Muslim':
-            data['religion'] = 'NM'
-        
         # Ensure customer_phone is present
         if not data.get('customer_phone'):
+            print("❌ Missing customer_phone")
             return Response({
                 'message': 'Contact Number is required',
                 'status': 'error'
