@@ -66,25 +66,21 @@ def home(request):
         </html>
     """)
 
-def serve_react(request, path=''):
+# Serve React app for specific routes
+def serve_react_app(request, path=''):
     index_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'index.html')
     try:
         with open(index_path, 'r') as f:
-            return HttpResponse(f.read())
+            content = f.read()
+            return HttpResponse(content)
     except FileNotFoundError:
-        return HttpResponse("""
-            <h1>React App Not Found</h1>
-            <p>Please build the frontend: <code>cd frontend && npm run build</code></p>
-            <p>Then copy to: <code>backend/static/</code></p>
-        """, status=404)
+        return HttpResponse(f"<h1>React app not found at {index_path}</h1><p>Please build the frontend first.</p>", status=404)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('inventory.urls')),
+    path('agent/', serve_react_app, name='agent'),
+    path('menu/', serve_react_app, name='menu'),
+    path('dashboard/', serve_react_app, name='dashboard'),
     path('', home, name='home'),
-]
-
-# Catch-all route for React app
-urlpatterns += [
-    re_path(r'^(?P<path>.*)/$', serve_react),
 ]
