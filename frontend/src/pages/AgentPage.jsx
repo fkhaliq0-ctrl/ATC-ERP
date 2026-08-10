@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import './AgentPage.css';
 
 const API_URL = 'https://atc-geca.onrender.com/api/create-inquiry/';
@@ -10,13 +10,27 @@ const AgentPage = () => {
     customerPhone: '',
     customerType: 'IICC',
     religion: '',
-    agentPhone: ''  // ← NEW: Agent's own phone number
+    agentPhone: ''
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
-  const [whatsappLink, setWhatsappLink] = useState('');
+
+  // Auto-detect agent's phone number on page load
+  useEffect(() => {
+    const savedPhone = localStorage.getItem('agentPhone');
+    if (savedPhone) {
+      setFormData(prev => ({ ...prev, agentPhone: savedPhone }));
+    } else {
+      // Ask once and save
+      const phone = prompt('Enter your phone number for tracking (will be saved):');
+      if (phone) {
+        localStorage.setItem('agentPhone', phone);
+        setFormData(prev => ({ ...prev, agentPhone: phone }));
+      }
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -108,9 +122,8 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
       customer_name: formData.customerName,
       customer_phone: formData.customerPhone,
       customer_type: formData.customerType,
-      agent_phone: formData.agentPhone,  // ← Save agent's phone number
+      agent_phone: formData.agentPhone,
       greeting_used: greeting,
-      message: message,
       status: 'New'
     };
 
@@ -127,15 +140,12 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
 
       if (response.ok) {
         setSuccess(true);
-        // Create WhatsApp link with the message
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${formData.customerPhone}?text=${encodedMessage}`;
-        setWhatsappLink(whatsappUrl);
         
-        // Auto-open WhatsApp after 2 seconds
         setTimeout(() => {
           window.open(whatsappUrl, '_blank');
-        }, 1500);
+        }, 1000);
         
         console.log('✅ Inquiry saved successfully!');
       } else {
@@ -184,19 +194,6 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="agent-form">
-              <div className="form-group">
-                <label>Your (Agent) Phone Number <span className="required">*</span></label>
-                <input 
-                  type="tel" 
-                  name="agentPhone" 
-                  value={formData.agentPhone} 
-                  onChange={handleInputChange} 
-                  placeholder="e.g., 9876543210"
-                  required 
-                />
-                <small className="field-hint">This helps us track who sent the inquiry</small>
-              </div>
-
               <div className="form-group">
                 <label>Customer Type (Religion) <span className="required">*</span></label>
                 <select name="religion" value={formData.religion} onChange={handleInputChange} required>

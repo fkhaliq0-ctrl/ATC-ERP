@@ -245,7 +245,7 @@ class Inquiry(models.Model):
         ('Cancelled', 'Cancelled'),
     ]
 
-    agent_name = models.CharField(max_length=100, blank=True, null=True)
+    agent_phone = models.CharField(max_length=15, blank=True, null=True)
     religion = models.CharField(max_length=2, choices=RELIGION_CHOICES, blank=True, null=True)
     gender = models.CharField(max_length=4, choices=GENDER_CHOICES, blank=True, null=True)
     customer_name = models.CharField(max_length=200, blank=True, null=True)
