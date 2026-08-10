@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.http import HttpResponse
-from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 import os
 
 def home(request):
@@ -66,21 +67,23 @@ def home(request):
         </html>
     """)
 
-# Serve React app for specific routes
-def serve_react_app(request, path=''):
+def serve_react(request, path=''):
     index_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'index.html')
     try:
         with open(index_path, 'r') as f:
-            content = f.read()
-            return HttpResponse(content)
+            return HttpResponse(f.read())
     except FileNotFoundError:
-        return HttpResponse(f"<h1>React app not found at {index_path}</h1><p>Please build the frontend first.</p>", status=404)
+        return HttpResponse(f"<h1>React app not found at {index_path}</h1>", status=404)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('inventory.urls')),
-    path('agent/', serve_react_app, name='agent'),
-    path('menu/', serve_react_app, name='menu'),
-    path('dashboard/', serve_react_app, name='dashboard'),
+    path('agent/', serve_react, name='agent'),
+    path('menu/', serve_react, name='menu'),
+    path('dashboard/', serve_react, name='dashboard'),
     path('', home, name='home'),
 ]
+
+# Serve static files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
