@@ -17,10 +17,9 @@ const AgentPage = () => {
   const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [e.target.name]: e.target.value
     });
   };
 
@@ -28,13 +27,6 @@ const AgentPage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
-    // Check if phone number is entered
-    if (!formData.customerPhone || formData.customerPhone.trim() === '') {
-      setError('Please enter a contact number');
-      setLoading(false);
-      return;
-    }
 
     // Build greeting
     let greeting = '';
@@ -56,16 +48,18 @@ const AgentPage = () => {
       greeting += ` Dear Sir/Madam`;
     }
 
-    // Create payload
+    // ✅ CORRECT PAYLOAD - snake_case field names
     const payload = {
       religion: formData.religion,
       gender: formData.gender,
-      customer_name: formData.customerName,
-      customer_phone: formData.customerPhone,
-      customer_type: formData.customerType,
+      customer_name: formData.customerName,     // ← snake_case
+      customer_phone: formData.customerPhone,   // ← snake_case
+      customer_type: formData.customerType,     // ← snake_case
       greeting_used: greeting,
       status: 'New'
     };
+
+    console.log('📤 Sending payload:', payload);
 
     try {
       const response = await fetch(API_URL, {
@@ -81,11 +75,7 @@ const AgentPage = () => {
       if (response.ok) {
         setSuccess(true);
       } else {
-        let errorMsg = data.message || 'Failed to save inquiry.';
-        if (data.errors) {
-          errorMsg += ' - ' + JSON.stringify(data.errors);
-        }
-        setError(errorMsg);
+        setError(data.message || data.errors || 'Failed to save inquiry.');
       }
     } catch (err) {
       setError('Network error. Please try again.');
