@@ -80,9 +80,11 @@ def serve_react(request, path=''):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('inventory.urls')),
-    path('static/<path:path>', serve, {'document_root': os.path.join(os.path.dirname(__file__), '..', 'static')}),
     path('agent/', serve_react, name='agent'),
     path('menu/', serve_react, name='menu'),
     path('dashboard/', serve_react, name='dashboard'),
     path('', home, name='home'),
 ]
+
+# Serve static files with correct MIME types
+urlpatterns += static('/assets/', document_root=os.path.join(os.path.dirname(__file__), '..', 'static', 'assets'))
