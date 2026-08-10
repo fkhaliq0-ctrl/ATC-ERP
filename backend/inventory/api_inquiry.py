@@ -16,7 +16,6 @@ class InquirySerializer(serializers.ModelSerializer):
             'customer_type': {'required': False, 'allow_null': True},
             'greeting_used': {'required': False, 'allow_null': True},
             'status': {'required': False, 'allow_null': True},
-            'agent_name': {'required': False, 'allow_null': True},
         }
 
 @api_view(['POST'])
@@ -27,7 +26,6 @@ def create_inquiry(request):
         print(json.dumps(request.data, indent=2))
         print("=" * 60)
         
-        # Get the data
         data = request.data.copy()
         
         # Map religion values if needed
@@ -36,12 +34,6 @@ def create_inquiry(request):
         elif data.get('religion') == 'Non-Muslim':
             data['religion'] = 'NM'
         
-        # Map gender values if needed
-        if data.get('gender') == 'Male':
-            data['gender'] = 'Mr.'
-        elif data.get('gender') == 'Female':
-            data['gender'] = 'Ms.'
-        
         # Ensure customer_phone is present
         if not data.get('customer_phone'):
             return Response({
@@ -49,12 +41,7 @@ def create_inquiry(request):
                 'status': 'error'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Debug: Print processed data
-        print("📝 PROCESSED DATA:")
-        print(json.dumps(data, indent=2))
-        print("=" * 60)
-        
-        # Try to validate
+        # Validate the data
         serializer = InquirySerializer(data=data)
         
         if serializer.is_valid():

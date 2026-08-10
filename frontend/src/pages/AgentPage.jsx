@@ -48,13 +48,13 @@ const AgentPage = () => {
       greeting += ` Dear Sir/Madam`;
     }
 
-    // Create payload with correct snake_case field names for API
+    // Create payload with CORRECT snake_case field names for API
     const payload = {
       religion: formData.religion,
       gender: formData.gender,
-      customer_name: formData.customerName,     // ← snake_case
-      customer_phone: formData.customerPhone,   // ← snake_case
-      customer_type: formData.customerType,     // ← snake_case
+      customer_name: formData.customerName,     // ✅ snake_case
+      customer_phone: formData.customerPhone,   // ✅ snake_case (MUST match API)
+      customer_type: formData.customerType,     // ✅ snake_case
       greeting_used: greeting,
       status: 'New'
     };
