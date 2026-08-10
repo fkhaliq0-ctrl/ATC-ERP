@@ -9,12 +9,14 @@ const AgentPage = () => {
     customerName: '',
     customerPhone: '',
     customerType: 'IICC',
-    religion: ''
+    religion: '',
+    agentPhone: ''  // ← NEW: Agent's own phone number
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [whatsappLink, setWhatsappLink] = useState('');
 
   const handleInputChange = (e) => {
     setFormData({
@@ -48,18 +50,69 @@ const AgentPage = () => {
       greeting += ` Dear Sir/Madam`;
     }
 
-    // ✅ CORRECT PAYLOAD - snake_case field names
+    // Generate menu link
+    const menuLink = 'https://atc-geca.onrender.com/menu';
+
+    // Build WhatsApp message
+    let message = '';
+    if (formData.customerType === 'IICC') {
+      message = `${greeting},
+
+Zebaish Caterers extends warmest congratulations to you on your upcoming event at the India Islamic Cultural Centre, New Delhi.
+
+We are honored to be an empanelled caterer & event organizer at IICC and would love to be a part of your special day.
+
+We specialize in Authentic Indian, Mughlai & Vegetarian Cuisine, curated with Delhi's finest chefs to deliver:
+✅ Exceptional Taste
+✅ Unparalleled Quality
+✅ Impeccable Presentation & Service
+
+You can explore our work here:
+📷 https://www.instagram.com/zebaish.caterers
+
+To customize your event, please select your preferred menu options using our convenient online link:
+🔗 ${menuLink}
+
+For any queries:
+📞 +91 99999 50056
+📞 +91 98999 54606
+
+Zebaish Caterers
+Empanelled Caterer & Event Organizer - IICC, New Delhi`;
+    } else {
+      message = `${greeting},
+
+Zebaish Caterers extends warm congratulations on your upcoming event!
+
+We are honored to introduce our exceptional catering services. Specializing in authentic Indian, Mughlai, and vegetarian cuisine, we partner with Delhi's finest chefs to deliver:
+✅ Exceptional taste
+✅ Unparalleled quality
+✅ Immaculate presentation
+
+Explore our Instagram page for culinary inspiration:
+📷 https://www.instagram.com/zebaish.caterers
+
+To personalize your event, please select your preferred menu options using our convenient online link:
+🔗 ${menuLink}
+
+Contact Us:
+📞 +91 99999 50056 | 📞 +91 98999 54606
+
+Zebaish Caterers — A Unit of Allied Trading Corporation`;
+    }
+
+    // Create payload
     const payload = {
       religion: formData.religion,
       gender: formData.gender,
-      customer_name: formData.customerName,     // ← snake_case
-      customer_phone: formData.customerPhone,   // ← snake_case
-      customer_type: formData.customerType,     // ← snake_case
+      customer_name: formData.customerName,
+      customer_phone: formData.customerPhone,
+      customer_type: formData.customerType,
+      agent_phone: formData.agentPhone,  // ← Save agent's phone number
       greeting_used: greeting,
+      message: message,
       status: 'New'
     };
-
-    console.log('📤 Sending payload:', payload);
 
     try {
       const response = await fetch(API_URL, {
@@ -74,6 +127,17 @@ const AgentPage = () => {
 
       if (response.ok) {
         setSuccess(true);
+        // Create WhatsApp link with the message
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${formData.customerPhone}?text=${encodedMessage}`;
+        setWhatsappLink(whatsappUrl);
+        
+        // Auto-open WhatsApp after 2 seconds
+        setTimeout(() => {
+          window.open(whatsappUrl, '_blank');
+        }, 1500);
+        
+        console.log('✅ Inquiry saved successfully!');
       } else {
         setError(data.message || data.errors || 'Failed to save inquiry.');
       }
@@ -99,16 +163,40 @@ const AgentPage = () => {
           {success ? (
             <div className="success-message">
               <p>✅ Query sent successfully!</p>
-              <p className="success-detail">The customer will receive a WhatsApp message with the menu link.</p>
+              <p className="success-detail">WhatsApp is opening with the message.</p>
+              <p className="success-detail">Please review and send to the customer.</p>
               <button 
                 className="btn-new-query" 
-                onClick={() => { setSuccess(false); setFormData({ gender: '', customerName: '', customerPhone: '', customerType: 'IICC', religion: '' }); }}
+                onClick={() => { 
+                  setSuccess(false); 
+                  setFormData({ 
+                    gender: '', 
+                    customerName: '', 
+                    customerPhone: '', 
+                    customerType: 'IICC', 
+                    religion: '',
+                    agentPhone: formData.agentPhone
+                  }); 
+                }}
               >
                 Send New Query
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="agent-form">
+              <div className="form-group">
+                <label>Your (Agent) Phone Number <span className="required">*</span></label>
+                <input 
+                  type="tel" 
+                  name="agentPhone" 
+                  value={formData.agentPhone} 
+                  onChange={handleInputChange} 
+                  placeholder="e.g., 9876543210"
+                  required 
+                />
+                <small className="field-hint">This helps us track who sent the inquiry</small>
+              </div>
+
               <div className="form-group">
                 <label>Customer Type (Religion) <span className="required">*</span></label>
                 <select name="religion" value={formData.religion} onChange={handleInputChange} required>
@@ -140,7 +228,7 @@ const AgentPage = () => {
               </div>
 
               <div className="form-group">
-                <label>Contact Number <span className="required">*</span></label>
+                <label>Customer Contact Number <span className="required">*</span></label>
                 <input 
                   type="tel" 
                   name="customerPhone" 
