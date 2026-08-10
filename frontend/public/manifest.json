@@ -1,6 +1,6 @@
-{
-  "name": "ATC ERP - Agent Inquiry",
-  "short_name": "ATC Agent",
+﻿{
+  "name": "Zebaish Caterers - Agent",
+  "short_name": "Zebaish",
   "description": "Send inquiries to customers for Zebaish Caterers",
   "start_url": "/agent/",
   "scope": "/",
