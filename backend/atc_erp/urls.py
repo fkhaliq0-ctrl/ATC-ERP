@@ -5,6 +5,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
 import os
+import mimetypes
+
+# Register MIME types for static files
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('image/svg+xml', '.svg')
+mimetypes.add_type('font/woff2', '.woff2')
 
 def home(request):
     return HttpResponse("""
@@ -87,4 +94,10 @@ urlpatterns = [
 ]
 
 # Serve static files with correct MIME types
-urlpatterns += static('/assets/', document_root=os.path.join(os.path.dirname(__file__), '..', 'static', 'assets'))
+static_dir = os.path.join(os.path.dirname(__file__), '..', 'static')
+urlpatterns += [
+    re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': os.path.join(static_dir, 'assets')}),
+]
+
+# Also serve any other static files
+urlpatterns += static(settings.STATIC_URL, document_root=static_dir)
