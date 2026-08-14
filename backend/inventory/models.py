@@ -129,6 +129,14 @@ class PurchaseInvoice(models.Model):
     total_import_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True)
     import_notes = models.TextField(blank=True, null=True)
 
+    # ========== Correction System Fields ==========
+    is_corrected = models.BooleanField(default=False)
+    original_invoice = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='corrections')
+    correction_date = models.DateField(blank=True, null=True)
+    correction_reason = models.TextField(blank=True, null=True)
+    corrected_by = models.CharField(max_length=100, blank=True, null=True)
+    correction_count = models.IntegerField(default=0)
+
     def __str__(self):
         return self.invoice_number
 
