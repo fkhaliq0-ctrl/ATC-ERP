@@ -192,6 +192,8 @@ const MenuSelection = () => {
   const [expandedCategories, setExpandedCategories] = useState({});
   const [showConfirm, setShowConfirm] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [itemQuantities, setItemQuantities] = useState({});
+  const [sendingToZebaish, setSendingToZebaish] = useState(false);
 
   useEffect(() => {
     const categoryKeys = Object.keys(menuData);
@@ -585,6 +587,128 @@ const MenuSelection = () => {
     });
   };
 
+  // Quantity controls
+  const getItemKey = (category, item) => `${category}::${item}`;
+  const getItemQty = (category, item) => itemQuantities[getItemKey(category, item)] || 1;
+  const handleQtyChange = (category, item, delta) => {
+    const key = getItemKey(category, item);
+    const current = itemQuantities[key] || 1;
+    const newQty = Math.max(1, current + delta);
+    setItemQuantities(prev => ({ ...prev, [key]: newQty }));
+  };
+
+  // ============================================
+  // SAVE AS PDF (self-contained, no dependencies)
+  // ============================================
+  const handleSaveAsPDF = () => {
+    // Build styled HTML, then open in new window for Print → Save as PDF
+    let menuHTML = '';
+    let totalItems = 0;
+    Object.keys(formData.menu_selections).forEach((category) => {
+      const items = formData.menu_selections[category];
+      if (items && items.length > 0) {
+        menuHTML += `<tr><td colspan="2" style="background:#f5f5f5;padding:8px 12px;font-weight:700;color:#1a237e;font-size:13px;">${category} (${items.length})</td></tr>`;
+        items.forEach((item) => {
+          const qty = getItemQty(category, item);
+          totalItems += qty;
+          menuHTML += `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;font-size:12px;">${item}</td><td style="padding:6px 12px;border-bottom:1px solid #eee;font-size:12px;text-align:center;font-weight:600;">${qty}</td></tr>`;
+        });
+      }
+    });
+
+    const html = `
+      <!DOCTYPE html>
+      <html><head><title>Zebaish Menu - ${formData.customer_name}</title>
+      <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color:#333; padding:24px; }
+        .header { background:#1a237e; color:#fff; padding:20px; text-align:center; border-radius:8px 8px 0 0; }
+        .header h1 { font-size:24px; margin-bottom:4px; }
+        .header p { font-size:12px; opacity:0.7; }
+        .gold-bar { height:4px; background:linear-gradient(90deg,#f5c842,#d4a020); }
+        .details { padding:16px 20px; background:#fafafa; border-bottom:1px solid #eee; }
+        .details-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 20px; }
+        .detail-item { font-size:12px; }
+        .detail-item span { color:#888; }
+        .detail-item strong { color:#333; }
+        table { width:100%; border-collapse:collapse; margin-top:12px; }
+        .summary { padding:12px 20px; background:#f5f5f5; border-top:2px solid #f5c842; font-size:13px; font-weight:600; }
+        .footer { text-align:center; padding:12px; font-size:10px; color:#aaa; margin-top:12px; }
+        @media print { body { padding:12px; } .no-print { display:none; } }
+      </style></head><body>
+      <div class="header">
+        <h1>🍽️ ZEBAISH CATERERS</h1>
+        <p>A Unit of Allied Trading Corporation</p>
+        <p style="margin-top:4px;">Menu Selection & Estimate</p>
+      </div>
+      <div class="gold-bar"></div>
+      <div class="details">
+        <div class="details-grid">
+          <div class="detail-item"><span>Customer: </span><strong>${formData.customer_name || 'N/A'}</strong></div>
+          <div class="detail-item"><span>Phone: </span><strong>${formData.customer_phone || 'N/A'}</strong></div>
+          <div class="detail-item"><span>Venue: </span><strong>${formData.venue || 'N/A'}</strong></div>
+          <div class="detail-item"><span>City: </span><strong>${formData.city || 'N/A'}</strong></div>
+          <div class="detail-item"><span>PAX: </span><strong>${formData.pax || 'N/A'}</strong></div>
+          <div class="detail-item"><span>Function: </span><strong>${formData.function_type || 'N/A'}</strong></div>
+          <div class="detail-item"><span>Date: </span><strong>${formData.event_date || 'N/A'}</strong></div>
+          <div class="detail-item"><span>Time: </span><strong>${formData.event_time || 'N/A'}</strong></div>
+        </div>
+      </div>
+      <table>${menuHTML}</table>
+      <div class="summary">
+        Total Items: ${totalItems} &nbsp;|&nbsp; Categories: ${Object.keys(formData.menu_selections).filter(k => formData.menu_selections[k]?.length > 0).length}
+      </div>
+      <div class="footer">Generated on ${new Date().toLocaleString()} • Zebaish Caterers Menu Selection Tool</div>
+      </body></html>`;
+
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => printWindow.print(), 500);
+    }
+  };
+
+  // ============================================
+  // SEND TO ZEBAISH (POST to backend)
+  // ============================================
+  const handleSendToZebaish = async () => {
+    setSendingToZebaish(true);
+    const payload = {
+      customer_name: formData.customer_name,
+      customer_phone: formData.customer_phone,
+      venue: formData.venue,
+      city: formData.city,
+      pax: parseInt(formData.pax) || null,
+      gathering_type: formData.gathering_type,
+      function_type: formData.function_type,
+      service_required: formData.service_required,
+      event_date: formData.event_date,
+      event_time: formData.event_time,
+      menu_selections: formData.menu_selections,
+      item_quantities: itemQuantities,
+      pre_wedding_functions: preWeddingFunctions,
+    };
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        setSuccess(true);
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Failed to send menu.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    }
+    setSendingToZebaish(false);
+  };
+
   const getFilteredItems = (category, items) => {
     if (!searchTerm.trim()) return items;
     return items.filter(item => 
@@ -883,7 +1007,7 @@ const MenuSelection = () => {
       )}
 
       {/* ============================================
-          PREVIEW MODAL - Gold Design + Edit Mode
+          PREVIEW MODAL - View Menu + Inline Edit + PDF + Send
           ============================================ */}
       {showPreview && (
         <div className="modal-overlay-dark" onClick={() => setShowPreview(false)}>
@@ -893,6 +1017,16 @@ const MenuSelection = () => {
               <p>{getTotalItems()} items across {Object.keys(formData.menu_selections).filter(k => formData.menu_selections[k]?.length > 0).length} categories</p>
             </div>
             <div className="preview-modal-body">
+              {/* Customer & Event Summary */}
+              <div className="preview-summary-card">
+                <div className="preview-summary-row"><span>👤 Customer:</span> <strong>{formData.customer_name || 'N/A'}</strong></div>
+                <div className="preview-summary-row"><span>📞 Phone:</span> <strong>{formData.customer_phone || 'N/A'}</strong></div>
+                <div className="preview-summary-row"><span>📍 Venue:</span> <strong>{formData.venue || 'N/A'}</strong></div>
+                <div className="preview-summary-row"><span>👥 PAX:</span> <strong>{formData.pax || 'N/A'}</strong></div>
+                <div className="preview-summary-row"><span>🎉 Function:</span> <strong>{formData.function_type || 'N/A'}</strong></div>
+                <div className="preview-summary-row"><span>📅 Date:</span> <strong>{formData.event_date || 'N/A'}</strong></div>
+              </div>
+
               {Object.keys(formData.menu_selections).map((category) => (
                 formData.menu_selections[category]?.length > 0 && (
                   <div key={category} className="preview-modal-category">
@@ -901,12 +1035,20 @@ const MenuSelection = () => {
                       <span className="preview-modal-cat-count">{formData.menu_selections[category].length}</span>
                     </div>
                     <div className="preview-modal-items">
-                      {formData.menu_selections[category].map((item) => (
-                        <div key={item} className="preview-modal-item">
-                          <span className="preview-modal-item-name">• {item}</span>
-                          <button className="preview-modal-remove" onClick={() => handleRemoveItem(category, item)} title="Remove item">✕</button>
-                        </div>
-                      ))}
+                      {formData.menu_selections[category].map((item) => {
+                        const qty = getItemQty(category, item);
+                        return (
+                          <div key={item} className="preview-modal-item">
+                            <span className="preview-modal-item-name">{item}</span>
+                            <div className="preview-qty-controls">
+                              <button className="qty-btn" onClick={() => handleQtyChange(category, item, -1)}>-</button>
+                              <span className="qty-value">{qty}</span>
+                              <button className="qty-btn" onClick={() => handleQtyChange(category, item, 1)}>+</button>
+                            </div>
+                            <button className="preview-modal-remove" onClick={() => handleRemoveItem(category, item)} title="Remove item">✕</button>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )
@@ -915,6 +1057,19 @@ const MenuSelection = () => {
                 <div className="preview-modal-empty">No items selected yet.</div>
               )}
             </div>
+
+            {/* Action Buttons */}
+            {getTotalItems() > 0 && (
+              <div className="preview-actions">
+                <button className="preview-action-btn pdf-action" onClick={handleSaveAsPDF}>
+                  📄 Save as PDF
+                </button>
+                <button className="preview-action-btn zebaish-action" onClick={handleSendToZebaish} disabled={sendingToZebaish}>
+                  {sendingToZebaish ? '⏳ Sending...' : '📤 Send to Zebaish'}
+                </button>
+              </div>
+            )}
+
             <div className="modal-actions-dark">
               <button className="modal-btn-cancel-dark" onClick={() => setShowPreview(false)}>✕ Close</button>
               {getTotalItems() > 0 && (
