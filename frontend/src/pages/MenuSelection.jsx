@@ -264,11 +264,10 @@ const MenuSelection = () => {
               nextCheckbox = allCheckboxes[i];
               break;
             }
-            // Stop as soon as we hit a different category
             if (cat && cat !== currentCategory) break;
           }
 
-          // Step 2: If no more in same category, find first in NEXT category
+          // Step 2: If no more in same category, find first in NEXT category (visible)
           if (!nextCheckbox) {
             for (let i = currentIndex + 1; i < allCheckboxes.length; i++) {
               const cat = allCheckboxes[i].closest('.menu-category-dark');
@@ -279,10 +278,53 @@ const MenuSelection = () => {
             }
           }
 
+          // Step 3: If still no checkbox found, try expanding the NEXT collapsed category
+          if (!nextCheckbox) {
+            const categoryKeys = Object.keys(menuData);
+            const currentCategoryIndex = categoryKeys.findIndex(key => {
+              const catEl = document.querySelector(`.menu-category-dark`);
+              // Match by checking all category containers
+              return currentCategory && Array.from(form.querySelectorAll('.menu-category-dark')).indexOf(currentCategory) === categoryKeys.indexOf(key);
+            });
+
+            // Find current category index by DOM position
+            const allCategoryEls = form.querySelectorAll('.menu-category-dark');
+            const currentDomIndex = Array.from(allCategoryEls).indexOf(currentCategory);
+
+            // Find next collapsed category and expand it
+            for (let i = currentDomIndex + 1; i < allCategoryEls.length; i++) {
+              const catEl = allCategoryEls[i];
+              if (!catEl.classList.contains('expanded')) {
+                // Find the category key and expand it
+                const categoryHeader = catEl.querySelector('.category-title-dark span');
+                if (categoryHeader) {
+                  const categoryName = categoryHeader.textContent || '';
+                  for (const key of categoryKeys) {
+                    if (key.includes(categoryName) || categoryName.includes(key)) {
+                      if (!expandedCategories[key]) {
+                        toggleCategory(key);
+                      }
+                      break;
+                    }
+                  }
+                }
+                // Wait for expand, then focus first checkbox
+                setTimeout(() => {
+                  const firstCheckbox = catEl.querySelector('input[type="checkbox"]');
+                  if (firstCheckbox) {
+                    firstCheckbox.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    firstCheckbox.focus();
+                  }
+                }, 200);
+                return;
+              }
+            }
+          }
+
           if (nextCheckbox) {
             // Expand the target category if collapsed
             const targetCategory = nextCheckbox.closest('.menu-category-dark');
-            if (targetCategory) {
+            if (targetCategory && !targetCategory.classList.contains('expanded')) {
               const categoryHeader = targetCategory.querySelector('.category-title-dark span');
               if (categoryHeader) {
                 const categoryName = categoryHeader.textContent || '';
@@ -295,12 +337,14 @@ const MenuSelection = () => {
                   }
                 }
               }
-            }
-            // Focus after a brief delay to let the category expand
-            setTimeout(() => {
+              setTimeout(() => {
+                nextCheckbox.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                nextCheckbox.focus();
+              }, 200);
+            } else {
               nextCheckbox.scrollIntoView({ block: 'center', behavior: 'smooth' });
               nextCheckbox.focus();
-            }, 150);
+            }
           } else {
             // No more checkboxes in any category - move to Submit
             const submitBtn = form.querySelector('.btn-submit-dark');
