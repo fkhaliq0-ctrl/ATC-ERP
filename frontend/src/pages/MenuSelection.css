@@ -1,15 +1,25 @@
-﻿/* ============================================
+/* ============================================
    IMPROVED CONTRAST - Lighter Dark Theme
    ============================================ */
 
 .menu-container-dark {
   min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: #12121e;
   padding: 30px 20px;
   display: flex;
   justify-content: center;
   font-family: 'Inter', 'Segoe UI', sans-serif;
   position: relative;
+}
+
+.menu-body-dark {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .menu-card-dark {
@@ -231,6 +241,7 @@
 .menu-stats-dark {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .menu-stats-item-dark {
@@ -281,7 +292,7 @@
   cursor: pointer;
 }
 
-/* CATEGORIES - Lighter background for readability */
+/* CATEGORIES */
 .menu-category-dark {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
@@ -350,7 +361,7 @@
   border: 1px solid rgba(245, 200, 66, 0.06);
 }
 
-/* MENU ITEMS - Lighter background for easy reading */
+/* MENU ITEMS */
 .menu-items-grid-dark {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -466,10 +477,61 @@
   letter-spacing: 0.5px;
 }
 
-/* RESPONSIVE */
+/* ============================================
+   PREVIEW TAB BUTTON
+   ============================================ */
+.preview-tab-btn {
+  background: rgba(245, 200, 66, 0.08);
+  border: 1px solid rgba(245, 200, 66, 0.15);
+  color: #f5c842;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.preview-tab-btn:hover {
+  background: rgba(245, 200, 66, 0.15);
+  border-color: rgba(245, 200, 66, 0.25);
+}
+
+/* ============================================
+   SUCCESS MESSAGE
+   ============================================ */
+.success-message-dark {
+  background: rgba(245, 200, 66, 0.04);
+  border: 1px solid rgba(245, 200, 66, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.success-message-dark p {
+  color: #f5c842;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.success-detail-dark {
+  color: rgba(200, 200, 220, 0.5) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 @media (max-width: 768px) {
+  .menu-container-dark {
+    padding: 12px 8px;
+  }
   .menu-card-dark {
     padding: 18px 16px;
+    border-radius: 16px;
   }
   .form-row-dark {
     grid-template-columns: 1fr;
@@ -480,14 +542,18 @@
   .menu-header-dark h1 {
     font-size: 24px;
   }
+  .menu-header-section-dark {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .menu-stats-dark {
+    flex-wrap: wrap;
+  }
 }
 
-
 /* ============================================
-   CALENDAR COLOR FIX - Bright & Visible
+   CALENDAR COLOR FIX
    ============================================ */
-
-/* Date input calendar icon color */
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.8) sepia(1) saturate(3) hue-rotate(5deg);
   cursor: pointer;
@@ -500,7 +566,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   background-color: rgba(245, 200, 66, 0.2);
 }
 
-/* Date input text color */
 input[type="date"] {
   color-scheme: dark;
 }
@@ -513,7 +578,6 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
   color: #e8e8f0;
 }
 
-/* Time input */
 input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(0.8) sepia(1) saturate(3) hue-rotate(5deg);
   cursor: pointer;
@@ -713,7 +777,7 @@ input[type="time"] {
 }
 
 /* ============================================
-   PREVIEW MODAL - Gold Design
+   PREVIEW MODAL
    ============================================ */
 .preview-modal-dark {
   max-width: 600px;
@@ -812,7 +876,7 @@ input[type="time"] {
 }
 
 /* ============================================
-   SAVE OPTIONS - After Submission
+   SAVE OPTIONS
    ============================================ */
 .save-options-dark {
   display: flex;
