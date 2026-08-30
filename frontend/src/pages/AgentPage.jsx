@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AgentPage.css';
 import { useNavigate } from 'react-router-dom';
 import FirstTimeSetupModal from '../components/FirstTimeSetupModal';
@@ -73,19 +73,19 @@ Zebaish Caterers extends warmest congratulations to you on your upcoming event a
 We are honored to be an empanelled caterer & event organizer at IICC and would love to be a part of your special day.
 
 We specialize in Authentic Indian, Mughlai & Vegetarian Cuisine, curated with Delhi's finest chefs to deliver:
-âœ… Exceptional Taste
-âœ… Unparalleled Quality
-âœ… Impeccable Presentation & Service
+✅ Exceptional Taste
+✅ Unparalleled Quality
+✅ Impeccable Presentation & Service
 
 You can explore our work here:
-ðŸ“· https://www.instagram.com/zebaish.caterers
+📷 https://www.instagram.com/zebaish.caterers
 
 To personalize your event, please select your preferred menu options using our convenient online link:
-ðŸ”— ${menuLink}
+🔗 ${menuLink}
 
 For any queries:
-ðŸ“ž +91 99999 50056
-ðŸ“ž +91 98999 54606
+📞 +91 99999 50056
+📞 +91 98999 54606
 
 Zebaish Caterers
 Empanelled Caterer & Event Organizer - IICC, New Delhi`;
@@ -95,20 +95,20 @@ Empanelled Caterer & Event Organizer - IICC, New Delhi`;
 Zebaish Caterers extends warm congratulations on your upcoming event!
 
 We are honored to introduce our exceptional catering services. Specializing in authentic Indian, Mughlai, and vegetarian cuisine, we partner with Delhi's finest chefs to deliver:
-âœ… Exceptional taste
-âœ… Unparalleled quality
-âœ… Immaculate presentation
+✅ Exceptional taste
+✅ Unparalleled quality
+✅ Immaculate presentation
 
 Explore our Instagram page for culinary inspiration:
-ðŸ“· https://www.instagram.com/zebaish.caterers
+📷 https://www.instagram.com/zebaish.caterers
 
 To personalize your event, please select your preferred menu options using our convenient online link:
-ðŸ”— ${menuLink}
+🔗 ${menuLink}
 
 Contact Us:
-ðŸ“ž +91 99999 50056 | ðŸ“ž +91 98999 54606
+📞 +91 99999 50056 | 📞 +91 98999 54606
 
-Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
+Zebaish Caterers — A Unit of Allied Trading Corporation`;
     }
 
     if (formData.agentPhone) {
@@ -163,9 +163,9 @@ Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           timeout: 10000,
         });
-        console.log('âœ… Inquiry saved to backend');
+        console.log('✅ Inquiry saved to backend');
       } catch (apiError) {
-        console.log('âš ï¸ API save failed, but WhatsApp message was sent:', apiError.message);
+        console.log('⚠️ API save failed, but WhatsApp message was sent:', apiError.message);
       }
 
       setTimeout(() => {
@@ -203,51 +203,64 @@ Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
         }}
       />
       <div className="agent-card">
+        {/* ── Header ── */}
         <div className="agent-header">
-          <span className="agent-logo">ðŸ½ï¸</span>
+          <div className="agent-logo">🍽️</div>
           <h1>Zebaish Caterers</h1>
           <p className="agent-subtitle">A unit of Allied Trading Corporation</p>
         </div>
 
+        <div className="agent-divider" />
+
+        {/* ── Body ── */}
         <div className="agent-body">
+          {/* Partner Info */}
           <div className="partner-info">
             <span className="partner-label">
-              ðŸ“± Channel Partner: <strong>{formData.agentPhone ? `+91 ${formData.agentPhone}` : 'Not Registered'}</strong>
+              📱 Channel Partner: <strong>{formData.agentPhone ? `+91 ${formData.agentPhone}` : 'Not Registered'}</strong>
             </span>
             <button className="partner-change-btn" onClick={() => setShowSetupModal(true)}>
               {formData.agentPhone ? 'Change' : 'Register'}
             </button>
           </div>
 
-          <p className="agent-welcome">Enter customer details to send a menu inquiry.</p>
-
           {success ? (
             <div className="success-message">
-              <p>âœ… Query sent successfully!</p>
+              <div className="success-icon">✅</div>
+              <p className="success-title">Query sent successfully!</p>
               <p className="success-detail">WhatsApp is opening with the message.</p>
               <p className="success-detail">Please review and send to the customer.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="agent-form">
+              {/* Section Title */}
+              <div className="section-title">
+                <span>📋 Enter Customer Details</span>
+                <div className="section-divider" />
+              </div>
+
+              {/* Customer Type */}
               <div className="form-group">
-                <label>Customer Type (Religion) <span className="required">*</span></label>
+                <label>Customer Type <span className="required">*</span></label>
                 <select name="religion" value={formData.religion} onChange={handleInputChange} required>
-                  <option value="">Select</option>
+                  <option value="">— Select Customer Type —</option>
                   <option value="M">Muslim (M)</option>
                   <option value="NM">Non-Muslim (NM)</option>
                 </select>
                 <small className="field-hint">Determines greeting: "Assalamu Alaikum" or "Warm Greetings"</small>
               </div>
 
+              {/* Gender */}
               <div className="form-group">
                 <label>Gender <span className="optional">(Optional)</span></label>
                 <select name="gender" value={formData.gender} onChange={handleInputChange}>
-                  <option value="">Select</option>
+                  <option value="">— Select Gender —</option>
                   <option value="Mr.">Mr.</option>
                   <option value="Ms.">Ms.</option>
                 </select>
               </div>
 
+              {/* Customer Name */}
               <div className="form-group">
                 <label>Customer Name <span className="optional">(Optional)</span></label>
                 <input
@@ -255,10 +268,11 @@ Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
                   name="customerName"
                   value={formData.customerName}
                   onChange={handleInputChange}
-                  placeholder="Enter customer name"
+                  placeholder="Enter customer's full name"
                 />
               </div>
 
+              {/* Customer Contact */}
               <div className="form-group">
                 <label>Customer Contact Number <span className="required">*</span></label>
                 <input
@@ -266,11 +280,12 @@ Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
                   name="customerPhone"
                   value={formData.customerPhone}
                   onChange={handleInputChange}
-                  placeholder="e.g., 9876543210"
+                  placeholder="e.g., 98765 43210"
                   required
                 />
               </div>
 
+              {/* Venue Type - Radio Buttons */}
               <div className="form-group">
                 <label>Venue Type</label>
                 <div className="radio-group">
@@ -282,6 +297,7 @@ Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
                       checked={formData.customerType === 'IICC'}
                       onChange={handleInputChange}
                     />
+                    <span className="radio-custom" />
                     IICC Customer
                   </label>
                   <label className="radio-label">
@@ -292,22 +308,27 @@ Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
                       checked={formData.customerType === 'NonIICC'}
                       onChange={handleInputChange}
                     />
+                    <span className="radio-custom" />
                     Non-IICC Customer
                   </label>
                 </div>
               </div>
 
-              {error && <div className="error-message">{error}</div>}
+              {error && <div className="error-message">⚠️ {error}</div>}
 
+              {/* Submit Button */}
               <button type="submit" className="btn-submit" disabled={loading || !isRegistered}>
-                {loading ? 'Sending...' : !isRegistered ? 'ðŸ”’ Register First' : 'ðŸ“© Send Query to Customer'}
+                {loading ? '⏳ Sending...' : !isRegistered ? '🔒 Register First' : '📩 Send Query to Customer'}
               </button>
             </form>
           )}
         </div>
 
+        <div className="agent-divider" />
+
+        {/* ── Footer ── */}
         <div className="agent-footer">
-          <p>ðŸ”’ All data is secure and stored in your ERP system.</p>
+          <p>🔒 All data is secure and stored in your ERP system.</p>
         </div>
       </div>
     </div>
@@ -315,4 +336,3 @@ Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
 };
 
 export default AgentPage;
-
