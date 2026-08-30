@@ -1,0 +1,66 @@
+﻿# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Backup folders
+*BACKUP_*
+*backup*
+*.backup
+*.bak
+
+# Node modules
+node_modules/
+
+# Database files
+*.sqlite3
+*.db
+database/backups/
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.log
+*.zip
+
+# Environment files
+.env
+*.env
+!.env.example
+
+# Uploads
+media/
+pdf_invoices/
+
+# Android build
+android/
+*.apk
+
+# Baileys server
+baileys-server/
+
+# Agent app
+agent-app/
+
+# NSSM
+nssm-2.24/
+nssm.zip
+
+# Software details
+Software details/
+
+# Freebuff
+.freebuff/
+
+# Frontend dist
+dist/
+build/
+
+# Hidden files
+.*
+!.gitignore
+frontend/public/zebaish-connect.apk
+frontend/public/apk/

@@ -1,0 +1,30 @@
+Date: 16/8/2026
+Time: 20:57
+Phone Number: +919818182021
+Message: Dear Customer,Your invoice has been generated.Invoice No: 1406Amount: Rs. 60400.00Thank you for your business!Allied Trading CorporationPDF attached separately.
+--------------------
+Date: 16/8/2026
+Time: 21:3
+Phone Number: +919818182021
+Message: Dear Customer,Your invoice has been generated.Invoice No: 1406Amount: Rs. 60400.00Thank you for your business!Allied Trading Corporation
+--------------------
+Date: 16/8/2026
+Time: 21:34
+Phone Number: +919818182021
+Message: Test message
+--------------------
+Date: 16/8/2026
+Time: 21:37
+Phone Number: +919818182021
+Message: Test message
+--------------------
+Date: 16/8/2026
+Time: 21:38
+Phone Number: +919818182021
+Message: Test message
+--------------------
+Date: 16/8/2026
+Time: 22:37
+Phone Number: +919818182021
+Message: Your invoice is ready.
+--------------------

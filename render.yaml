@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: zebaish-menu
+    runtime: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && node server.cjs
+    envVars:
+      - key: NODE_VERSION
+        value: 20

@@ -1,0 +1,77 @@
+﻿/* Printable A4 styles for Tax Invoice */
+@media print {
+  /* Hide interactive controls and non-printable buttons */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset layout for clean paper printing */
+  body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .invoice-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove borders from inputs/selects so they look like plain text when printed */
+  input, select, textarea {
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+  }
+
+  /* Prevent page breaks inside cards */
+  .card-box {
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}
+
+/* Invoice outer wrapper for screen view */
+.invoice-outer-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* Print-only elements - hidden on screen, visible when printing */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: inline !important;
+  }
+}
+
+/* ─── Print visibility rules for printable invoice/receipt modals ── */
+/* Added to support new printable invoice & receipt views in the Sales module */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable-invoice,
+  .printable-invoice * {
+    visibility: visible;
+  }
+  .printable-invoice {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+}

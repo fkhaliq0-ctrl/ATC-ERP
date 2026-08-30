@@ -1,0 +1,41 @@
+﻿# ============================================
+# WORKING LAYOUT INFORMATION
+# ============================================
+
+Date: 2026-08-25
+Time: ~17:30
+
+LAYOUT STRUCTURE:
+- LEFT: Main Content (Sales/Purchase/Masters Forms)
+- MIDDLE: Invoice History (Dark Gray background) - ONLY on Sales & Purchase pages
+- RIGHT: Dashboard Menu (Black background) - ALWAYS visible
+
+FILES THAT CONTROL THE LAYOUT:
+1. MainLayout.jsx - Main layout with sidebars
+2. SalesInvoice.jsx - Sales page (uses MainLayout)
+3. PurchaseInvoice.jsx - Purchase page (uses MainLayout)
+4. AppRoutes.jsx - All routes
+
+SIDEBAR DETAILS:
+- Invoice History: Width 155px, Dark Gray (#1a1a1a)
+- Dashboard Menu: Width 135px, Black (#000000)
+
+FONTS:
+- ATC Logo: 15px
+- Menu Items: 12px
+- Invoice Number: 11px
+- Customer Name: 10px
+
+BEHAVIOR:
+- Invoice History shows ONLY on /sales/invoice and /purchase/invoice
+- Dashboard Menu shows on ALL pages
+
+BACKUP LOCATION:
+E:\ATC-ERP\MASTER_BACKUP_2026-08-25_XX-XX-XX
+
+RESTORE COMMAND:
+Copy-Item "E:\ATC-ERP\MASTER_BACKUP_2026-08-25_XX-XX-XX\*" "E:\ATC-ERP\frontend\src\" -Recurse -Force
+
+============================================
+# DO NOT DELETE THIS FILE!
+============================================

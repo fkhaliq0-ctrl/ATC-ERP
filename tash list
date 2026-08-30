@@ -1,0 +1,16 @@
+[33m074a79b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{0}: reset: moving to 074a79b
+[33ma0c55bb[m HEAD@{1}: checkout: moving from 074a79b14f0235a73155ade3aa75fb412f648984 to master
+[33m074a79b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{2}: checkout: moving from master to 074a79b
+[33ma0c55bb[m HEAD@{3}: checkout: moving from f1369ac92abaf075d8c5dfae70b1caba7ddaffa2 to master
+[33mf1369ac[m HEAD@{4}: checkout: moving from master to f1369ac
+[33ma0c55bb[m HEAD@{5}: reset: moving to a0c55bb
+[33ma0c55bb[m HEAD@{6}: checkout: moving from 074a79b14f0235a73155ade3aa75fb412f648984 to master
+[33m074a79b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{7}: checkout: moving from master to HEAD~1
+[33ma0c55bb[m HEAD@{8}: reset: moving to HEAD@{3}
+[33ma0c55bb[m HEAD@{9}: reset: moving to a0c55bb
+[33m074a79b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{10}: reset: moving to 074a79b
+[33m074a79b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{11}: reset: moving to 074a79b
+[33ma0c55bb[m HEAD@{12}: reset: moving to HEAD
+[33ma0c55bb[m HEAD@{13}: commit: chore: stage and commit remaining frontend layout, components, and pages
+[33m074a79b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{14}: commit: feat: integrate master menu categories into customer booking form
+[33mf1369ac[m HEAD@{15}: commit (initial): Initial ATC ERP project setup
