@@ -2,24 +2,33 @@
    IMPROVED CONTRAST - Lighter Dark Theme
    ============================================ */
 
+html, body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .menu-container-dark {
   min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  touch-action: pan-y;
   background: #12121e;
   padding: 30px 20px;
   display: flex;
   justify-content: center;
   font-family: 'Inter', 'Segoe UI', sans-serif;
   position: relative;
+  box-sizing: border-box;
 }
 
 .menu-body-dark {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: visible;
 }
 
 .menu-card-dark {
@@ -528,6 +537,14 @@
 @media (max-width: 768px) {
   .menu-container-dark {
     padding: 12px 8px;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   .menu-card-dark {
     padding: 18px 16px;
