@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Box, Typography, Button, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-const APK_URL = 'https://drive.google.com/uc?export=download&id=1ozNfPnpC-Qd24_RF92LTuaTfLysu8Yh_';
+const APK_URL = 'https://drive.google.com/uc?export=download&id=170Li-HJrKrlPxSBGJW2KVE_8uFyLCmAJ';
 
 const SendAPKModal = ({ open, onClose }) => {
   const [phone, setPhone] = useState('');

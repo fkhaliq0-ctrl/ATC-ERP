@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const APK_URL = 'https://drive.google.com/uc?export=download&id=1ozNfPnpC-Qd24_RF92LTuaTfLysu8Yh_';
+const APK_URL = 'https://drive.google.com/uc?export=download&id=170Li-HJrKrlPxSBGJW2KVE_8uFyLCmAJ';
 
 const ApkDownload = () => {
   const [status, setStatus] = useState('ready');
