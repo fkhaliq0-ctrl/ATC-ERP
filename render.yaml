@@ -2,8 +2,10 @@ services:
   - type: web
     name: zebaish-menu
     runtime: node
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && node server.cjs
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: node server.cjs
+    publishDir: dist
     envVars:
       - key: NODE_VERSION
-        value: 20
+        value: 18
