@@ -1,9 +1,51 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 
-// Serve static files from the dist directory with CORRECT MIME types
-app.use(express.static(path.join(__dirname, 'dist'), {
+// ============================================
+// LOGGING TO DEBUG THE 404 ERROR
+// ============================================
+
+console.log('=== SERVER STARTUP DEBUG ===');
+console.log(`Current directory: ${__dirname}`);
+
+const distPath = path.join(__dirname, 'dist');
+console.log(`Looking for dist at: ${distPath}`);
+
+// Check if dist folder exists
+const distExists = fs.existsSync(distPath);
+console.log(`Does dist exist? ${distExists}`);
+
+if (distExists) {
+  try {
+    const files = fs.readdirSync(distPath);
+    console.log(`Files in dist (${files.length}): ${files.join(', ')}`);
+    
+    // Check for index.html
+    const indexPath = path.join(distPath, 'index.html');
+    const indexExists = fs.existsSync(indexPath);
+    console.log(`Does index.html exist? ${indexExists}`);
+  } catch (err) {
+    console.log(`Error reading dist: ${err.message}`);
+  }
+} else {
+  console.log('❌ dist folder NOT FOUND!');
+  console.log('Checking parent directory contents...');
+  
+  try {
+    const parentFiles = fs.readdirSync(__dirname);
+    console.log(`Files in parent (${__dirname}): ${parentFiles.join(', ')}`);
+  } catch (err) {
+    console.log(`Error reading parent: ${err.message}`);
+  }
+}
+
+// ============================================
+// SERVE STATIC FILES
+// ============================================
+
+app.use(express.static(distPath, {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css');
@@ -29,12 +71,28 @@ app.use(express.static(path.join(__dirname, 'dist'), {
   }
 }));
 
-// Catch-all route for SPA routing
+// ============================================
+// CATCH-ALL ROUTE
+// ============================================
+
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  const indexPath = path.join(distPath, 'index.html');
+  console.log(`Serving: ${req.url} -> ${indexPath}`);
+  
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    console.log(`❌ index.html NOT FOUND at ${indexPath}`);
+    res.status(404).send(`index.html not found. Checked: ${indexPath}`);
+  }
 });
+
+// ============================================
+// START SERVER
+// ============================================
 
 const port = process.env.PORT || 10000;
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`=== SERVER RUNNING on port ${port} ===`);
+  console.log(`Serving from: ${distPath}`);
 });
