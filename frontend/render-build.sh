@@ -1,9 +1,10 @@
 #!/bin/bash
 echo "=== Starting custom build ==="
-echo "Deleting old build cache..."
-rm -rf node_modules/.vite
+echo "Deleting EVERYTHING (node_modules, .vite, dist)..."
+rm -rf node_modules
+rm -rf .vite
 rm -rf dist
-echo "Installing dependencies..."
+echo "Installing dependencies (fresh)..."
 npm install
 echo "Building app..."
 npm run build
