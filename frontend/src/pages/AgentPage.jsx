@@ -8,24 +8,30 @@ const API_URL = 'https://atc-geca.onrender.com/api/create-inquiry/';
 
 const AgentPage = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     gender: '',
     customerName: '',
     customerPhone: '',
     customerType: 'IICC',
     religion: '',
-    agentPhone: ''
+    agentPhone: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [showSetupModal, setShowSetupModal] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
     const savedPhone = localStorage.getItem('agentPhone');
     if (savedPhone) {
       setFormData(prev => ({ ...prev, agentPhone: savedPhone }));
+      setIsRegistered(true);
+    } else {
+      // Force registration on first visit
+      setShowSetupModal(true);
     }
   }, []);
 
@@ -36,11 +42,7 @@ const AgentPage = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
+  const buildWhatsAppMessage = () => {
     let greeting = '';
     if (formData.religion === 'M') {
       greeting = 'Assalamu Alaikum';
@@ -60,7 +62,7 @@ const AgentPage = () => {
       greeting += ` Dear Sir/Madam`;
     }
 
-    const menuLink = 'https://atc-geca.onrender.com/menu';
+    const menuLink = 'https://zebaish-menu.onrender.com/menu-selection';
 
     let message = '';
     if (formData.customerType === 'IICC') {
@@ -78,7 +80,7 @@ We specialize in Authentic Indian, Mughlai & Vegetarian Cuisine, curated with De
 You can explore our work here:
 📷 https://www.instagram.com/zebaish.caterers
 
-To customize your event, please select your preferred menu options using our convenient online link:
+To personalize your event, please select your preferred menu options using our convenient online link:
 🔗 ${menuLink}
 
 For any queries:
@@ -110,62 +112,77 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
     }
 
     if (formData.agentPhone) {
-      message += `\n\n[Shared by Registered Partner: +91-${formData.agentPhone}]`;
+      message += `\n\n[Shared by Registered Channel Partner: +91-${formData.agentPhone}]`;
     }
 
-    const payload = {
-      religion: formData.religion,
-      gender: formData.gender,
-      customer_name: formData.customerName,
-      customer_phone: formData.customerPhone,
-      customer_type: formData.customerType,
-      agent_phone: formData.agentPhone,
-      greeting_used: greeting,
-      status: 'New'
-    };
+    return message;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    if (!formData.religion) {
+      setError('Please select Customer Type (Religion)');
+      setLoading(false);
+      return;
+    }
+    if (!formData.customerPhone) {
+      setError('Please enter Customer Contact Number');
+      setLoading(false);
+      return;
+    }
 
     try {
-      console.log('Sending API request to:', API_URL);
-      console.log('Payload:', payload);
+      const message = buildWhatsAppMessage();
       
-      const response = await axios.post(API_URL, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        timeout: 30000, // 30 second timeout
-      });
-
-      console.log('Response status:', response.status);
-      console.log('Response data:', response.data);
-
-      setSuccess(true);
+      // STEP 1: Open WhatsApp IMMEDIATELY
       const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/${formData.customerPhone}?text=${encodedMessage}`;
+      const cleanPhone = formData.customerPhone.replace(/[^0-9]/g, '');
+      const phone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+      const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+      window.location.href = whatsappUrl;
       
-      setTimeout(() => {
-        window.open(whatsappUrl, '_blank');
-      }, 1000);
-    } catch (err) {
-      console.error('Network Error:', err);
-      console.error('Error details:', {
-        message: err.message,
-        response: err.response,
-        stack: err.stack,
-        name: err.name
-      });
-      
-      // More specific error messages based on error type
-      if (err.code === 'ECONNABORTED') {
-        setError('Request timeout. Please check your internet connection and try again.');
-      } else if (err.code === 'ENOTFOUND' || err.code === 'ECONNREFUSED') {
-        setError('Network connection error. Please check your internet connection and try again.');
-      } else if (err.response) {
-        // Server responded with error status
-        setError(err.response.data?.message || err.response.data?.errors || 'Server error. Please try again later.');
-      } else {
-        setError(`Error: ${err.message || 'Network error. Please try again.'}`);
+      setSuccess(true);
+
+      // STEP 2: Save to API in background
+      try {
+        const payload = {
+          religion: formData.religion,
+          gender: formData.gender,
+          customer_name: formData.customerName || 'Walk-in Customer',
+          customer_phone: formData.customerPhone,
+          customer_type: formData.customerType,
+          agent_phone: formData.agentPhone,
+          message: message,
+          status: 'New'
+        };
+
+        await axios.post(API_URL, payload, {
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          timeout: 10000,
+        });
+        console.log('✅ Inquiry saved to backend');
+      } catch (apiError) {
+        console.log('⚠️ API save failed, but WhatsApp message was sent:', apiError.message);
       }
+
+      setTimeout(() => {
+        setSuccess(false);
+        setFormData({
+          gender: '',
+          customerName: '',
+          customerPhone: '',
+          customerType: 'IICC',
+          religion: '',
+          agentPhone: formData.agentPhone,
+        });
+      }, 5000);
+      
+    } catch (err) {
+      console.error('Error:', err);
+      setError(err.message || 'Network error. Please try again.');
     }
 
     setLoading(false);
@@ -175,9 +192,13 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
     <div className="agent-container">
       <FirstTimeSetupModal
         isOpen={showSetupModal}
-        onClose={() => setShowSetupModal(false)}
+        onClose={() => {
+          // Only allow closing if already registered
+          if (isRegistered) setShowSetupModal(false);
+        }}
         onSave={(phone) => {
           setFormData(prev => ({ ...prev, agentPhone: phone }));
+          setIsRegistered(true);
           setShowSetupModal(false);
         }}
       />
@@ -189,15 +210,11 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
         </div>
 
         <div className="agent-body">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f1f5f9', padding: '0.65rem 1rem', borderRadius: '8px', marginBottom: '1rem' }}>
-            <span style={{ fontSize: '0.875rem', color: '#1e293b', fontWeight: '500' }}>
-              📱 Partner: <strong>{formData.agentPhone ? `+91 ${formData.agentPhone}` : 'Not Registered'}</strong>
+          <div className="partner-info">
+            <span className="partner-label">
+              📱 Channel Partner: <strong>{formData.agentPhone ? `+91 ${formData.agentPhone}` : 'Not Registered'}</strong>
             </span>
-            <button 
-              type="button"
-              onClick={() => setShowSetupModal(true)}
-              style={{ background: 'none', border: '1px solid #0284c7', color: '#0284c7', padding: '0.25rem 0.6rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer' }}
-            >
+            <button className="partner-change-btn" onClick={() => setShowSetupModal(true)}>
               {formData.agentPhone ? 'Change' : 'Register'}
             </button>
           </div>
@@ -209,22 +226,6 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
               <p>✅ Query sent successfully!</p>
               <p className="success-detail">WhatsApp is opening with the message.</p>
               <p className="success-detail">Please review and send to the customer.</p>
-              <button 
-                className="btn-new-query" 
-                onClick={() => { 
-                  setSuccess(false); 
-                  setFormData({ 
-                    gender: '', 
-                    customerName: '', 
-                    customerPhone: '', 
-                    customerType: 'IICC', 
-                    religion: '',
-                    agentPhone: formData.agentPhone
-                  }); 
-                }}
-              >
-                Send New Query
-              </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="agent-form">
@@ -249,24 +250,24 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
 
               <div className="form-group">
                 <label>Customer Name <span className="optional">(Optional)</span></label>
-                <input 
-                  type="text" 
-                  name="customerName" 
-                  value={formData.customerName} 
-                  onChange={handleInputChange} 
+                <input
+                  type="text"
+                  name="customerName"
+                  value={formData.customerName}
+                  onChange={handleInputChange}
                   placeholder="Enter customer name"
                 />
               </div>
 
               <div className="form-group">
                 <label>Customer Contact Number <span className="required">*</span></label>
-                <input 
-                  type="tel" 
-                  name="customerPhone" 
-                  value={formData.customerPhone} 
-                  onChange={handleInputChange} 
+                <input
+                  type="tel"
+                  name="customerPhone"
+                  value={formData.customerPhone}
+                  onChange={handleInputChange}
                   placeholder="e.g., 9876543210"
-                  required 
+                  required
                 />
               </div>
 
@@ -274,22 +275,22 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
                 <label>Venue Type</label>
                 <div className="radio-group">
                   <label className="radio-label">
-                    <input 
-                      type="radio" 
-                      name="customerType" 
-                      value="IICC" 
-                      checked={formData.customerType === 'IICC'} 
-                      onChange={handleInputChange} 
+                    <input
+                      type="radio"
+                      name="customerType"
+                      value="IICC"
+                      checked={formData.customerType === 'IICC'}
+                      onChange={handleInputChange}
                     />
                     IICC Customer
                   </label>
                   <label className="radio-label">
-                    <input 
-                      type="radio" 
-                      name="customerType" 
-                      value="NonIICC" 
-                      checked={formData.customerType === 'NonIICC'} 
-                      onChange={handleInputChange} 
+                    <input
+                      type="radio"
+                      name="customerType"
+                      value="NonIICC"
+                      checked={formData.customerType === 'NonIICC'}
+                      onChange={handleInputChange}
                     />
                     Non-IICC Customer
                   </label>
@@ -298,8 +299,8 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
 
               {error && <div className="error-message">{error}</div>}
 
-              <button type="submit" className="btn-submit" disabled={loading}>
-                {loading ? 'Sending...' : '📩 Send Query to Customer'}
+              <button type="submit" className="btn-submit" disabled={loading || !isRegistered}>
+                {loading ? 'Sending...' : !isRegistered ? '🔒 Register First' : '📩 Send Query to Customer'}
               </button>
             </form>
           )}
