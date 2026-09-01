@@ -1,7 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard/Dashboard';
-import AgentPage from '../pages/AgentPage';
+import AgentPage from '../pages/AgentPage_new';
 import SalesInvoice from '../pages/sales/SalesInvoice';
 import PurchaseInvoice from '../pages/purchase/PurchaseInvoice';
 import MenuSelection from '../pages/MenuSelection';
