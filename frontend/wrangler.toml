@@ -1,4 +1,4 @@
-name = "zebaish-menu"
+name = "menuzebaish"
 compatibility_date = "2026-09-01"
 main = "dist/index.html"
 
