@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Box, Typography, Button, IconButton, TextField } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { MdClose } from 'react-icons/md';
 
 const APK_URL = 'https://drive.google.com/uc?export=download&id=170Li-HJrKrlPxSBGJW2KVE_8uFyLCmAJ';
 
@@ -48,7 +48,7 @@ const SendAPKModal = ({ open, onClose }) => {
           Send APK to Partner
         </Typography>
         <IconButton onClick={onClose} sx={{ color: '#888' }}>
-          <CloseIcon />
+          <MdClose size={20} />
         </IconButton>
       </DialogTitle>
 

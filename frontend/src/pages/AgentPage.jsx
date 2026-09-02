@@ -1,14 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AgentPage.css';
-import { useNavigate } from 'react-router-dom';
+import {
+  MdRestaurant,
+  MdPhone,
+  MdPerson,
+  MdCake,
+  MdLocationOn,
+  MdSend,
+  MdLock,
+  MdCheckCircle,
+  MdError,
+  MdEdit,
+  MdVerifiedUser,
+} from 'react-icons/md';
 import FirstTimeSetupModal from '../components/FirstTimeSetupModal';
 import axios from 'axios';
 
 const API_URL = 'https://atc-geca.onrender.com/api/create-inquiry/';
 
 const AgentPage = () => {
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     gender: '',
     customerName: '',
@@ -23,23 +33,20 @@ const AgentPage = () => {
   const [error, setError] = useState('');
   const [showSetupModal, setShowSetupModal] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const formRef = useRef(null);
 
   useEffect(() => {
     const savedPhone = localStorage.getItem('agentPhone');
     if (savedPhone) {
-      setFormData(prev => ({ ...prev, agentPhone: savedPhone }));
+      setFormData((prev) => ({ ...prev, agentPhone: savedPhone }));
       setIsRegistered(true);
     } else {
-      // Force registration on first visit
       setShowSetupModal(true);
     }
   }, []);
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const buildWhatsAppMessage = () => {
@@ -136,14 +143,14 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
 
     try {
       const message = buildWhatsAppMessage();
-      
+
       // STEP 1: Open WhatsApp IMMEDIATELY
       const encodedMessage = encodeURIComponent(message);
       const cleanPhone = formData.customerPhone.replace(/[^0-9]/g, '');
       const phone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
       const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
       window.location.href = whatsappUrl;
-      
+
       setSuccess(true);
 
       // STEP 2: Save to API in background
@@ -156,16 +163,15 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
           customer_type: formData.customerType,
           agent_phone: formData.agentPhone,
           message: message,
-          status: 'New'
+          status: 'New',
         };
 
         await axios.post(API_URL, payload, {
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           timeout: 10000,
         });
-        console.log('✅ Inquiry saved to backend');
       } catch (apiError) {
-        console.log('⚠️ API save failed, but WhatsApp message was sent:', apiError.message);
+        console.log('API save failed, but WhatsApp was sent:', apiError.message);
       }
 
       setTimeout(() => {
@@ -179,9 +185,7 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
           agentPhone: formData.agentPhone,
         });
       }, 5000);
-      
     } catch (err) {
-      console.error('Error:', err);
       setError(err.message || 'Network error. Please try again.');
     }
 
@@ -193,54 +197,88 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
       <FirstTimeSetupModal
         isOpen={showSetupModal}
         onClose={() => {
-          // Only allow closing if already registered
           if (isRegistered) setShowSetupModal(false);
         }}
         onSave={(phone) => {
-          setFormData(prev => ({ ...prev, agentPhone: phone }));
+          setFormData((prev) => ({ ...prev, agentPhone: phone }));
           setIsRegistered(true);
           setShowSetupModal(false);
         }}
       />
+
       <div className="agent-card">
+        {/* ── Header ── */}
         <div className="agent-header">
-          <span className="agent-logo">🍽️</span>
+          <div className="agent-logo">
+            <MdRestaurant size={40} />
+          </div>
           <h1>Zebaish Caterers</h1>
           <p className="agent-subtitle">A unit of Allied Trading Corporation</p>
         </div>
+        <div className="agent-divider" />
 
         <div className="agent-body">
+          {/* ── Partner Info ── */}
           <div className="partner-info">
             <span className="partner-label">
-              📱 Channel Partner: <strong>{formData.agentPhone ? `+91 ${formData.agentPhone}` : 'Not Registered'}</strong>
+              <MdPhone size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+              Channel Partner:{' '}
+              <strong>
+                {formData.agentPhone ? `+91 ${formData.agentPhone}` : 'Not Registered'}
+              </strong>
             </span>
             <button className="partner-change-btn" onClick={() => setShowSetupModal(true)}>
-              {formData.agentPhone ? 'Change' : 'Register'}
+              {formData.agentPhone ? (
+                <>
+                  <MdEdit size={12} /> Change
+                </>
+              ) : (
+                <>
+                  <MdVerifiedUser size={12} /> Register
+                </>
+              )}
             </button>
           </div>
 
-          <p className="agent-welcome">Enter customer details to send a menu inquiry.</p>
+          {/* ── Section Title ── */}
+          <div className="section-title">
+            <span>
+              <MdPerson size={16} /> Enter Customer Details
+            </span>
+            <div className="section-divider" />
+          </div>
 
           {success ? (
             <div className="success-message">
-              <p>✅ Query sent successfully!</p>
+              <MdCheckCircle size={36} className="success-icon" />
+              <p className="success-title">Query sent successfully!</p>
               <p className="success-detail">WhatsApp is opening with the message.</p>
               <p className="success-detail">Please review and send to the customer.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="agent-form">
+            <form ref={formRef} onSubmit={handleSubmit} className="agent-form">
+              {/* Customer Type */}
               <div className="form-group">
-                <label>Customer Type (Religion) <span className="required">*</span></label>
+                <label>
+                  <MdCake size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                  Customer Type (Religion) <span className="required">*</span>
+                </label>
                 <select name="religion" value={formData.religion} onChange={handleInputChange} required>
                   <option value="">Select</option>
                   <option value="M">Muslim (M)</option>
                   <option value="NM">Non-Muslim (NM)</option>
                 </select>
-                <small className="field-hint">Determines greeting: "Assalamu Alaikum" or "Warm Greetings"</small>
+                <small className="field-hint">
+                  Determines greeting: &quot;Assalamu Alaikum&quot; or &quot;Warm Greetings&quot;
+                </small>
               </div>
 
+              {/* Gender */}
               <div className="form-group">
-                <label>Gender <span className="optional">(Optional)</span></label>
+                <label>
+                  <MdPerson size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                  Gender <span className="optional">(Optional)</span>
+                </label>
                 <select name="gender" value={formData.gender} onChange={handleInputChange}>
                   <option value="">Select</option>
                   <option value="Mr.">Mr.</option>
@@ -248,8 +286,12 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
                 </select>
               </div>
 
+              {/* Customer Name */}
               <div className="form-group">
-                <label>Customer Name <span className="optional">(Optional)</span></label>
+                <label>
+                  <MdPerson size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                  Customer Name <span className="optional">(Optional)</span>
+                </label>
                 <input
                   type="text"
                   name="customerName"
@@ -259,8 +301,12 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
                 />
               </div>
 
+              {/* Customer Contact */}
               <div className="form-group">
-                <label>Customer Contact Number <span className="required">*</span></label>
+                <label>
+                  <MdPhone size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                  Customer Contact Number <span className="required">*</span>
+                </label>
                 <input
                   type="tel"
                   name="customerPhone"
@@ -271,8 +317,12 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
                 />
               </div>
 
+              {/* Venue Type — Radio Buttons */}
               <div className="form-group">
-                <label>Venue Type</label>
+                <label>
+                  <MdLocationOn size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                  Venue Type
+                </label>
                 <div className="radio-group">
                   <label className="radio-label">
                     <input
@@ -282,6 +332,7 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
                       checked={formData.customerType === 'IICC'}
                       onChange={handleInputChange}
                     />
+                    <span className="radio-custom-dot" />
                     IICC Customer
                   </label>
                   <label className="radio-label">
@@ -292,22 +343,45 @@ Zebaish Caterers — A Unit of Allied Trading Corporation`;
                       checked={formData.customerType === 'NonIICC'}
                       onChange={handleInputChange}
                     />
+                    <span className="radio-custom-dot" />
                     Non-IICC Customer
                   </label>
                 </div>
               </div>
 
-              {error && <div className="error-message">{error}</div>}
+              {error && (
+                <div className="error-message">
+                  <MdError size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                  {error}
+                </div>
+              )}
 
-              <button type="submit" className="btn-submit" disabled={loading || !isRegistered}>
-                {loading ? 'Sending...' : !isRegistered ? '🔒 Register First' : '📩 Send Query to Customer'}
+              <button
+                type="submit"
+                className="btn-submit"
+                disabled={loading || !isRegistered}
+              >
+                {loading ? (
+                  'Sending...'
+                ) : !isRegistered ? (
+                  <>
+                    <MdLock size={16} /> Register First
+                  </>
+                ) : (
+                  <>
+                    <MdSend size={16} /> Send Query to Customer
+                  </>
+                )}
               </button>
             </form>
           )}
         </div>
 
         <div className="agent-footer">
-          <p>🔒 All data is secure and stored in your ERP system.</p>
+          <p>
+            <MdLock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+            All data is secure and stored in your ERP system.
+          </p>
         </div>
       </div>
     </div>

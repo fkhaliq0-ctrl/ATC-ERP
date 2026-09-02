@@ -24,20 +24,19 @@ import {
   Stack,
 } from '@mui/material';
 import {
-  TrendingUp,
-  AttachMoney,
-  People,
-  Receipt,
-  Restaurant,
-  WhatsApp,
-  Dashboard as DashboardIcon,
-  Today,
-  CalendarMonth,
-  Assessment,
-  Add,
-  Print,
-  Send,
-} from '@mui/icons-material';
+  MdTrendingUp,
+  MdAttachMoney,
+  MdPeople,
+  MdReceipt,
+  MdRestaurant,
+  MdDashboard,
+  MdToday,
+  MdCalendarMonth,
+  MdAssessment,
+  MdAdd,
+  MdPrint,
+  MdSend,
+} from 'react-icons/md';
 
 const API_URL = 'https://atc-geca.onrender.com/api';
 
@@ -128,11 +127,11 @@ function Dashboard() {
 
   // Quick action buttons
   const quickActions = [
-    { title: 'New Sales Invoice', icon: <Add />, color: '#1976d2', link: '/sales/invoice/new' },
-    { title: 'New Customer', icon: <People />, color: '#2e7d32', link: '/masters/customers/new' },
-    { title: 'Agent Page', icon: <WhatsApp />, color: '#25D366', link: '/agent' },
-    { title: 'Print Invoice', icon: <Print />, color: '#ed6c02', link: '/sales/invoices' },
-    { title: 'Send via WhatsApp', icon: <Send />, color: '#128C7E', link: '/sales/invoices' },
+    { title: 'New Sales Invoice', icon: <MdAdd />, color: '#1976d2', link: '/sales/invoice/new' },
+    { title: 'New Customer', icon: <MdPeople />, color: '#2e7d32', link: '/masters/customers/new' },
+    { title: 'Agent Page', icon: <MdRestaurant />, color: '#25D366', link: '/agent' },
+    { title: 'Print Invoice', icon: <MdPrint />, color: '#ed6c02', link: '/sales/invoices' },
+    { title: 'Send via WhatsApp', icon: <MdSend />, color: '#128C7E', link: '/sales/invoices' },
   ];
 
   if (loading) {
@@ -157,13 +156,13 @@ function Dashboard() {
         </Box>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Chip
-            icon={<Today />}
+            icon={<MdToday />}
             label={new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
             color="primary"
             variant="outlined"
           />
           <Chip
-            icon={<WhatsApp />}
+            icon={<MdRestaurant />}
             label="WhatsApp Connected"
             color="success"
           />
@@ -183,7 +182,7 @@ function Dashboard() {
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: '#e3f2fd' }}>
-                  <AttachMoney sx={{ color: '#1976d2' }} />
+                  <MdAttachMoney style={{ color: '#1976d2', fontSize: 24 }} />
                 </Avatar>
               </Box>
             </CardContent>
@@ -201,7 +200,7 @@ function Dashboard() {
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: '#e8f5e9' }}>
-                  <TrendingUp sx={{ color: '#2e7d32' }} />
+                  <MdTrendingUp style={{ color: '#2e7d32', fontSize: 24 }} />
                 </Avatar>
               </Box>
             </CardContent>
@@ -219,7 +218,7 @@ function Dashboard() {
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: '#fff3e0' }}>
-                  <People sx={{ color: '#ed6c02' }} />
+                  <MdPeople style={{ color: '#ed6c02', fontSize: 24 }} />
                 </Avatar>
               </Box>
             </CardContent>
@@ -237,7 +236,7 @@ function Dashboard() {
                   </Typography>
                 </Box>
                 <Avatar sx={{ bgcolor: '#f3e5f5' }}>
-                  <Receipt sx={{ color: '#9c27b0' }} />
+                  <MdReceipt style={{ color: '#9c27b0', fontSize: 24 }} />
                 </Avatar>
               </Box>
             </CardContent>
