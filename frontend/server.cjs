@@ -46,8 +46,14 @@ if (distExists) {
 // ============================================
 
 app.use(express.static(distPath, {
+  maxAge: '1h',
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.css')) {
+    // No-cache for HTML to always get fresh version
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    } else if (filePath.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css');
     } else if (filePath.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript');

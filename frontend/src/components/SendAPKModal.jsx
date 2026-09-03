@@ -1,116 +1,119 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, Box, Typography, Button, IconButton, TextField } from '@mui/material';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdSend } from 'react-icons/md';
 
-const APK_URL = 'https://drive.google.com/uc?export=download&id=170Li-HJrKrlPxSBGJW2KVE_8uFyLCmAJ';
+const SendAPKModal = ({ isOpen, onClose, onSend }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
 
-const SendAPKModal = ({ open, onClose }) => {
-  const [phone, setPhone] = useState('');
-  const [sending, setSending] = useState(false);
-
-  if (!open) return null;
+  if (!isOpen) return null;
 
   const handleSend = () => {
-    if (!phone || phone.length < 10) {
-      alert('Please enter a valid 10-digit phone number');
-      return;
+    if (onSend) {
+      onSend(phoneNumber);
     }
-
-    setSending(true);
-    const cleanPhone = phone.replace(/\D/g, '');
-    const phoneWithCode = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
-    const message = `Download Zebaish Connect APK:\n${APK_URL}`;
-
-    window.location.href = `https://wa.me/${phoneWithCode}?text=${encodeURIComponent(message)}`;
-    setSending(false);
-    onClose();
+    setPhoneNumber('');
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="xs"
-      fullWidth={false}
-      PaperProps={{
-        sx: {
-          bgcolor: '#1a1a2e',
-          color: '#fff',
-          borderRadius: '12px',
-          border: '1px solid #333',
-          maxWidth: '360px',
-          width: '90%',
-        },
-      }}
-    >
-      <DialogTitle sx={{ pb: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, pt: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#f5c842', fontSize: '1rem' }}>
-          Send APK to Partner
-        </Typography>
-        <IconButton onClick={onClose} sx={{ color: '#888' }}>
-          <MdClose size={20} />
-        </IconButton>
-      </DialogTitle>
-
-      <DialogContent sx={{ pt: 0, px: 2.5, pb: 2.5 }}>
-        <Typography sx={{ color: '#aaa', fontSize: '0.8rem', mb: 2 }}>
-          Enter the partner's number to send the APK download link via WhatsApp.
-        </Typography>
-
-        <Box sx={{ mb: 2.5 }}>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="9876543210"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-            inputProps={{
-              maxLength: 10,
-              style: {
-                color: '#fff',
-                fontSize: '0.9rem',
-                padding: '10px 12px',
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <Typography sx={{ color: '#f5c842', fontWeight: 'bold', mr: 0.5, fontSize: '0.9rem' }}>+91</Typography>
-              ),
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                bgcolor: '#0d1117',
-                borderRadius: '8px',
-                '& fieldset': { borderColor: '#333' },
-                '&:hover fieldset': { borderColor: '#555' },
-                '&.Mui-focused fieldset': { borderColor: '#f5c842' },
-              },
-              '& .MuiInputBase-input::placeholder': { color: '#555' },
-            }}
-          />
-        </Box>
-
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={handleSend}
-          disabled={sending || !phone || phone.length < 10}
-          sx={{
-            bgcolor: '#25D366',
-            color: '#fff',
-            fontWeight: 'bold',
-            fontSize: '0.85rem',
-            py: 1.2,
-            borderRadius: '8px',
-            textTransform: 'none',
-            '&:hover': { bgcolor: '#1ebe5d' },
-            '&:disabled': { bgcolor: '#333', color: '#666' },
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0, 0, 0, 0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000,
+      padding: '20px'
+    }}>
+      <div style={{
+        background: '#1a1a1a',
+        borderRadius: '16px',
+        maxWidth: '480px',
+        width: '100%',
+        padding: '32px',
+        border: '1px solid #f5c842',
+        position: 'relative'
+      }}>
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '12px',
+            right: '16px',
+            background: 'none',
+            border: 'none',
+            color: '#666',
+            fontSize: '24px',
+            cursor: 'pointer'
           }}
         >
-          {sending ? 'Sending...' : '📤 Send via WhatsApp'}
-        </Button>
-      </DialogContent>
-    </Dialog>
+          <MdClose size={24} />
+        </button>
+
+        {/* Title */}
+        <h2 style={{ color: '#f5c842', fontSize: '22px', marginBottom: '8px' }}>
+          Send APK to Partner
+        </h2>
+        <p style={{ color: '#888', fontSize: '14px', marginBottom: '24px' }}>
+          Enter the partner's number to send the APK download link via WhatsApp.
+        </p>
+
+        {/* Phone Input */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ color: '#aaa', fontSize: '13px', fontWeight: '500', display: 'block', marginBottom: '6px' }}>
+            Phone Number
+          </label>
+          <div style={{ display: 'flex', alignItems: 'center', background: '#0d0d0d', borderRadius: '10px', border: '1px solid #2a2a2a' }}>
+            <span style={{ padding: '10px 12px', color: '#888', borderRight: '1px solid #2a2a2a' }}>+91</span>
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="9876543210"
+              style={{
+                width: '100%',
+                padding: '10px 14px',
+                background: 'transparent',
+                border: 'none',
+                color: '#fff',
+                fontSize: '16px',
+                outline: 'none'
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Send Button */}
+        <button
+          onClick={handleSend}
+          disabled={!phoneNumber || phoneNumber.length < 10}
+          style={{
+            width: '100%',
+            padding: '14px',
+            background: phoneNumber && phoneNumber.length >= 10
+              ? 'linear-gradient(135deg, #25D366, #128C7E)'
+              : '#2a2a2a',
+            border: 'none',
+            borderRadius: '10px',
+            color: phoneNumber && phoneNumber.length >= 10 ? '#fff' : '#666',
+            fontSize: '16px',
+            fontWeight: '700',
+            cursor: phoneNumber && phoneNumber.length >= 10 ? 'pointer' : 'not-allowed',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            transition: 'all 0.3s'
+          }}
+        >
+          <MdSend size={20} />
+          Send via WhatsApp
+        </button>
+      </div>
+    </div>
   );
 };
 

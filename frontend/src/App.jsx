@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import AppRoutes from './routes/AppRoutes';
 import MainLayout from './layouts/MainLayout';
 import ZebaishLayout from './layouts/ZebaishLayout';
-import AgentPage from './pages/AgentPage';
+import AgentPage from './pages/ChannelPartner';
 import './App.css';
 
 function App() {
