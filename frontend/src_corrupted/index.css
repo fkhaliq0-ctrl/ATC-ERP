@@ -1,0 +1,16 @@
+﻿/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0a0a0f;
+  color: #e8e8f0;
+}
+
+#root {
+  min-height: 100vh;
+}

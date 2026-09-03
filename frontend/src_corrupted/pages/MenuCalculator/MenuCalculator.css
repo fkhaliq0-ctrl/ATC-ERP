@@ -1,0 +1,331 @@
+/* ── Menu Calculator Page ─────────────────────────────── */
+.mc-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.mc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #1a237e;
+}
+
+.mc-header h1 {
+  font-size: 22px;
+  color: #1a237e;
+  margin: 0;
+}
+
+.mc-header .mc-badge {
+  background: #ffc107;
+  color: #333;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+/* ── Section Cards ────────────────────────────────────── */
+.mc-section {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.mc-section h2 {
+  font-size: 14px;
+  color: #1a237e;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Form Grid ────────────────────────────────────────── */
+.mc-form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.mc-form-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.mc-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.mc-form-group label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+
+.mc-form-group input,
+.mc-form-group select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.mc-form-group input:focus,
+.mc-form-group select:focus {
+  outline: none;
+  border-color: #1a237e;
+  background: #fff;
+}
+
+.mc-form-group input:disabled {
+  background: #f0f0f0;
+  color: #666;
+}
+
+/* ── Menu Items Table ─────────────────────────────────── */
+.mc-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 10px;
+}
+
+.mc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mc-table th {
+  background: #1a237e;
+  color: #fff;
+  padding: 8px 6px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mc-table td {
+  padding: 4px 4px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.mc-table tbody tr:hover {
+  background: #f5f7ff;
+}
+
+.mc-table td input,
+.mc-table td select {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+.mc-table td input:focus,
+.mc-table td select:focus {
+  outline: none;
+  border-color: #1a237e;
+}
+
+.mc-table td input[type="number"] {
+  text-align: right;
+}
+
+.mc-table .mc-total-cell {
+  font-weight: 700;
+  color: #1a237e;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.mc-table .mc-action-cell {
+  text-align: center;
+}
+
+.mc-btn-remove {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mc-btn-remove:hover {
+  background: #c62828;
+}
+
+.mc-btn-add {
+  background: #1a237e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.mc-btn-add:hover {
+  background: #283593;
+}
+
+/* ── Extras Grid ──────────────────────────────────────── */
+.mc-extras-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.mc-extras-grid .mc-form-group input {
+  text-align: right;
+}
+
+/* ── Summary ──────────────────────────────────────────── */
+.mc-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.mc-summary-left {
+  /* Placeholder for future notes */
+}
+
+.mc-summary-right {
+  text-align: right;
+}
+
+.mc-summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.mc-summary-row.mc-grand-total {
+  border-top: 2px solid #1a237e;
+  border-bottom: 2px solid #1a237e;
+  font-weight: 700;
+  font-size: 16px;
+  color: #1a237e;
+  padding: 8px 0;
+  margin-top: 4px;
+}
+
+.mc-summary-row.mc-advance {
+  color: #e65100;
+  font-weight: 600;
+}
+
+.mc-summary-label {
+  color: #555;
+}
+
+.mc-summary-value {
+  font-weight: 600;
+  color: #333;
+}
+
+/* ── Buttons Bar ──────────────────────────────────────── */
+.mc-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.mc-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.mc-btn:active {
+  transform: scale(0.97);
+}
+
+.mc-btn-save {
+  background: #1976d2;
+  color: #fff;
+}
+
+.mc-btn-save:hover {
+  background: #1565c0;
+}
+
+.mc-btn-pdf {
+  background: #e65100;
+  color: #fff;
+}
+
+.mc-btn-pdf:hover {
+  background: #bf360c;
+}
+
+.mc-btn-whatsapp {
+  background: #25d366;
+  color: #fff;
+}
+
+.mc-btn-whatsapp:hover {
+  background: #1da851;
+}
+
+.mc-btn-reset {
+  background: #fff;
+  color: #e53935;
+  border: 1px solid #e53935;
+}
+
+.mc-btn-reset:hover {
+  background: #ffeaea;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .mc-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mc-extras-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mc-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .mc-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .mc-extras-grid {
+    grid-template-columns: 1fr;
+  }
+}

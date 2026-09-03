@@ -1,32 +1,29 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { Capacitor } from '@capacitor/core';
-import AppRoutes from './routes/AppRoutes';
-import MainLayout from './layouts/MainLayout';
-import ZebaishLayout from './layouts/ZebaishLayout';
-import AgentPage from './pages/ChannelPartner';
-import './App.css';
+﻿import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
+import MainLayout from "./layouts/MainLayout";
+import "./App.css";
+
+// Capacitor is only needed for mobile (APK) builds
+// For web, we use a dummy object
+const Capacitor = (() => {
+  if (typeof window !== 'undefined' && window.Capacitor) {
+    return window.Capacitor;
+  }
+  return {
+    isNativePlatform: () => false,
+    getPlatform: () => 'web',
+    registerPlugin: () => {},
+    Plugin: class {}
+  };
+})();
 
 function App() {
-  // Detect Capacitor environment
-  const isCapacitor = Capacitor.isNativePlatform() || 
-                       window.Capacitor?.isNativePlatform() || 
-                       window.location.protocol === 'capacitor:' ||
-                       Capacitor.getPlatform() !== 'web';
-
   return (
     <BrowserRouter>
-      {isCapacitor ? (
-        // APK: Show only AgentPage with ZebaishLayout (no sidebar)
-        <ZebaishLayout>
-          <AgentPage />
-        </ZebaishLayout>
-      ) : (
-        // Desktop: Show MainLayout with Dashboard and sidebar
-        <MainLayout>
-          <AppRoutes />
-        </MainLayout>
-      )}
+      <MainLayout>
+        <AppRoutes />
+      </MainLayout>
     </BrowserRouter>
   );
 }
