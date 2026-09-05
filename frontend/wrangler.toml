@@ -1,7 +1,9 @@
-name = "menuzebaish"
-compatibility_date = "2026-09-01"
-main = "dist/index.html"
+﻿name = "zebaish-menu"
+type = "static_assets"
 
-[assets]
-directory = "dist"
-binding = "ASSETS"
+[site]
+bucket = "./dist"
+entry-point = "."
+
+[build]
+command = "npm run build"
