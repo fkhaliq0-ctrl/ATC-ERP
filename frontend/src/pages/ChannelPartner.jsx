@@ -1,396 +1,173 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import './ChannelPartner.css';
-import {
-  MdRestaurant,
-  MdPhone,
-  MdPerson,
-  MdCake,
-  MdLocationOn,
-  MdSend,
-  MdLock,
-  MdCheckCircle,
-  MdError,
-  MdEdit,
-  MdVerifiedUser,
-} from 'react-icons/md';
+import React, { useState, useEffect } from 'react';
+import { MdRestaurant, MdPhone, MdPerson, MdCake, MdLocationOn, MdSend, MdLock, MdCheckCircle, MdError, MdEdit } from 'react-icons/md';
 import FirstTimeSetupModal from '../components/FirstTimeSetupModal';
-import axios from 'axios';
+import './ChannelPartner.css';
 
-const API_URL = 'https://atc-geca.onrender.com/api/create-inquiry/';
+const MENU_LINK = 'http://localhost:9999/menu-selection';
 
-const AgentPage = () => {
+const ChannelPartner = () => {
   const [formData, setFormData] = useState({
+    religion: '',
     gender: '',
     customerName: '',
     customerPhone: '',
     customerType: 'IICC',
-    religion: '',
-    agentPhone: '',
+    agentPhone: ''
   });
-
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
-  const [showSetupModal, setShowSetupModal] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
-  const formRef = useRef(null);
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const savedPhone = localStorage.getItem('agentPhone');
-    if (savedPhone) {
-      setFormData((prev) => ({ ...prev, agentPhone: savedPhone }));
+    const phone = localStorage.getItem('agentPhone');
+    if (phone) {
+      setFormData(prev => ({ ...prev, agentPhone: phone }));
       setIsRegistered(true);
     } else {
-      setShowSetupModal(true);
+      setShowRegistration(true);
     }
   }, []);
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'radio' ? (checked ? value : prev[name]) : value
+    }));
+    setError('');
+  };
+
+  const handleRegistrationSave = (phone) => {
+    setFormData(prev => ({ ...prev, agentPhone: phone }));
+    setIsRegistered(true);
+    setShowRegistration(false);
+  };
+
+  const handleChangePartner = () => {
+    setShowRegistration(true);
   };
 
   const buildWhatsAppMessage = () => {
-    let greeting = '';
-    if (formData.religion === 'M') {
-      greeting = 'Assalamu Alaikum';
-    } else if (formData.religion === 'NM') {
-      greeting = 'Warm Greetings';
-    } else {
-      greeting = 'Hello';
-    }
-
-    if (formData.customerName && formData.gender === 'Mr.') {
-      greeting += ` Mr. ${formData.customerName}`;
-    } else if (formData.customerName && formData.gender === 'Ms.') {
-      greeting += ` Ms. ${formData.customerName}`;
-    } else if (formData.customerName) {
-      greeting += ` ${formData.customerName}`;
-    } else {
-      greeting += ` Dear Sir/Madam`;
-    }
-
-    const menuLink = 'https://zebaish-menu.onrender.com/menu-selection';
-
-    let message = '';
-    if (formData.customerType === 'IICC') {
-      message = `${greeting},
-
-Zebaish Caterers extends warmest congratulations to you on your upcoming event at the India Islamic Cultural Centre, New Delhi.
-
-We are honored to be an empanelled caterer & event organizer at IICC and would love to be a part of your special day.
-
-We specialize in Authentic Indian, Mughlai & Vegetarian Cuisine, curated with Delhi's finest chefs to deliver:
-âœ… Exceptional Taste
-âœ… Unparalleled Quality
-âœ… Impeccable Presentation & Service
-
-You can explore our work here:
-ðŸ“· https://www.instagram.com/zebaish.caterers
-
-To personalize your event, please select your preferred menu options using our convenient online link:
-ðŸ”— ${menuLink}
-
-For any queries:
-ðŸ“ž +91 99999 50056
-ðŸ“ž +91 98999 54606
-
-Zebaish Caterers
-Empanelled Caterer & Event Organizer - IICC, New Delhi`;
-    } else {
-      message = `${greeting},
-
-Zebaish Caterers extends warm congratulations on your upcoming event!
-
-We are honored to introduce our exceptional catering services. Specializing in authentic Indian, Mughlai, and vegetarian cuisine, we partner with Delhi's finest chefs to deliver:
-âœ… Exceptional taste
-âœ… Unparalleled quality
-âœ… Immaculate presentation
-
-Explore our Instagram page for culinary inspiration:
-ðŸ“· https://www.instagram.com/zebaish.caterers
-
-To personalize your event, please select your preferred menu options using our convenient online link:
-ðŸ”— ${menuLink}
-
-Contact Us:
-ðŸ“ž +91 99999 50056 | ðŸ“ž +91 98999 54606
-
-Zebaish Caterers â€” A Unit of Allied Trading Corporation`;
-    }
-
-    if (formData.agentPhone) {
-      message += `\n\n[Shared by Registered Channel Partner: +91-${formData.agentPhone}]`;
-    }
-
-    return message;
+    const greeting = formData.religion === 'M'
+      ? 'Assalamu Alaikum'
+      : 'Warm Greetings';
+    const genderPrefix = formData.gender ? formData.gender + ' ' : '';
+    const customerDisplay = formData.customerName
+      ? genderPrefix + formData.customerName
+      : 'Valued Customer';
+    const venueText = formData.customerType === 'IICC'
+      ? 'IICC Premium Customer'
+      : 'Special Guest';
+    const lines = [
+      greeting, '',
+      'Dear ' + customerDisplay + ',', '',
+      'Thank you for your interest in Zebaish Caterers \u2014 a unit of Allied Trading Corporation.', '',
+      'We are pleased to share our curated menu for your upcoming event.',
+      'Please review and select your preferred items:', '',
+      'View & Select Menu:', MENU_LINK, '',
+      'Customer Type: ' + venueText,
+      'Contact: +91 ' + formData.customerPhone, '',
+      'For any queries, feel free to reach out.', '',
+      'Best Regards,', 'Zebaish Caterers Team', '+91 99999 50056'
+    ];
+    return lines.join('\n');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    if (!formData.religion) {
-      setError('Please select Customer Type (Religion)');
-      setLoading(false);
+    if (!isRegistered) { setShowRegistration(true); return; }
+    if (!formData.customerPhone || formData.customerPhone.length < 10) {
+      setError('Please enter a valid 10-digit customer phone number');
       return;
     }
-    if (!formData.customerPhone) {
-      setError('Please enter Customer Contact Number');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const message = buildWhatsAppMessage();
-
-      // STEP 1: Open WhatsApp IMMEDIATELY
-      const encodedMessage = encodeURIComponent(message);
-      const cleanPhone = formData.customerPhone.replace(/[^0-9]/g, '');
-      const phone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
-      const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
-      window.location.href = whatsappUrl;
-
-      setSuccess(true);
-
-      // STEP 2: Save to API in background
-      try {
-        const payload = {
-          religion: formData.religion,
-          gender: formData.gender,
-          customer_name: formData.customerName || 'Walk-in Customer',
-          customer_phone: formData.customerPhone,
-          customer_type: formData.customerType,
-          agent_phone: formData.agentPhone,
-          message: message,
-          status: 'New',
-        };
-
-        await axios.post(API_URL, payload, {
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          timeout: 10000,
-        });
-      } catch (apiError) {
-        console.log('API save failed, but WhatsApp was sent:', apiError.message);
-      }
-
-      setTimeout(() => {
-        setSuccess(false);
-        setFormData({
-          gender: '',
-          customerName: '',
-          customerPhone: '',
-          customerType: 'IICC',
-          religion: '',
-          agentPhone: formData.agentPhone,
-        });
-      }, 5000);
-    } catch (err) {
-      setError(err.message || 'Network error. Please try again.');
-    }
-
-    setLoading(false);
+    setSubmitting(true);
+    const message = buildWhatsAppMessage();
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = 'https://wa.me/91' + formData.customerPhone + '?text=' + encodedMessage;
+    try { window.location.href = whatsappUrl; } catch (err) { console.error(err); }
+    setTimeout(() => { setSubmitting(false); setSubmitted(true); setTimeout(() => setSubmitted(false), 5000); }, 1000);
   };
 
   return (
-    <div className="agent-container"><div style={{ background: "red", color: "white", padding: "20px", fontSize: "24px", textAlign: "center", borderRadius: "10px" }}>✅ NEW CODE IS LOADING! (If you see this, the new layout is working)</div>
-      <FirstTimeSetupModal
-        isOpen={showSetupModal}
-        onClose={() => {
-          if (isRegistered) setShowSetupModal(false);
-        }}
-        onSave={(phone) => {
-          setFormData((prev) => ({ ...prev, agentPhone: phone }));
-          setIsRegistered(true);
-          setShowSetupModal(false);
-        }}
-      />
-
-      <div className="agent-card">
-        {/* â”€â”€ Header â”€â”€ */}
-        <div className="agent-header">
-          <div className="agent-logo">
-            <MdRestaurant size={40} />
-          </div>
-          <h1>Zebaish Caterers</h1>
-          <p className="agent-subtitle">A unit of Allied Trading Corporation</p>
+    <div className="cp-container">
+      {showRegistration && <FirstTimeSetupModal isOpen={showRegistration} onClose={() => setShowRegistration(false)} onSave={handleRegistrationSave} />}
+      <div className="cp-card">
+        <div className="cp-header">
+          <div className="cp-logo"><MdRestaurant size={40} color="#f5c842" /></div>
+          <h1>Zebaish <span>Caterers</span></h1>
+          <p className="cp-subtitle">A unit of Allied Trading Corporation</p>
         </div>
-        <div className="agent-divider" />
-
-        <div className="agent-body">
-          {/* â”€â”€ Partner Info â”€â”€ */}
-          <div className="partner-info">
-            <span className="partner-label">
-              <MdPhone size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-              Channel Partner:{' '}
-              <strong>
-                {formData.agentPhone ? `+91 ${formData.agentPhone}` : 'Not Registered'}
-              </strong>
-            </span>
-            <button className="partner-change-btn" onClick={() => setShowSetupModal(true)}>
-              {formData.agentPhone ? (
-                <>
-                  <MdEdit size={12} /> Change
-                </>
-              ) : (
-                <>
-                  <MdVerifiedUser size={12} /> Register
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* â”€â”€ Section Title â”€â”€ */}
-          <div className="section-title">
-            <span>
-              <MdPerson size={16} /> Enter Customer Details
-            </span>
-            <div className="section-divider" />
-          </div>
-
-          {success ? (
-            <div className="success-message">
-              <MdCheckCircle size={36} className="success-icon" />
-              <p className="success-title">Query sent successfully!</p>
-              <p className="success-detail">WhatsApp is opening with the message.</p>
-              <p className="success-detail">Please review and send to the customer.</p>
+        <div className="cp-divider"></div>
+        {isRegistered && (
+          <div className="cp-partner-card">
+            <div className="cp-partner-left">
+              <MdPhone size={16} color="#f5c842" />
+              <span className="cp-partner-label">Channel Partner: <strong>+91 {formData.agentPhone}</strong></span>
             </div>
-          ) : (
-            <form ref={formRef} onSubmit={handleSubmit} className="agent-form">
-              {/* Customer Type */}
-              <div className="form-group">
-                <label>
-                  <MdCake size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  Customer Type (Religion) <span className="required">*</span>
-                </label>
-                <select name="religion" value={formData.religion} onChange={handleInputChange} required>
-                  <option value="">Select</option>
-                  <option value="M">Muslim (M)</option>
-                  <option value="NM">Non-Muslim (NM)</option>
-                </select>
-                <small className="field-hint">
-                  Determines greeting: &quot;Assalamu Alaikum&quot; or &quot;Warm Greetings&quot;
-                </small>
-              </div>
-
-              {/* Gender */}
-              <div className="form-group">
-                <label>
-                  <MdPerson size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  Gender <span className="optional">(Optional)</span>
-                </label>
-                <select name="gender" value={formData.gender} onChange={handleInputChange}>
-                  <option value="">Select</option>
-                  <option value="Mr.">Mr.</option>
-                  <option value="Ms.">Ms.</option>
-                </select>
-              </div>
-
-              {/* Customer Name */}
-              <div className="form-group">
-                <label>
-                  <MdPerson size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  Customer Name <span className="optional">(Optional)</span>
-                </label>
-                <input
-                  type="text"
-                  name="customerName"
-                  value={formData.customerName}
-                  onChange={handleInputChange}
-                  placeholder="Enter customer name"
-                />
-              </div>
-
-              {/* Customer Contact */}
-              <div className="form-group">
-                <label>
-                  <MdPhone size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  Customer Contact Number <span className="required">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="customerPhone"
-                  value={formData.customerPhone}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 9876543210"
-                  required
-                />
-              </div>
-
-              {/* Venue Type â€” Radio Buttons */}
-              <div className="form-group">
-                <label>
-                  <MdLocationOn size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                  Venue Type
-                </label>
-                <div className="radio-group">
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="customerType"
-                      value="IICC"
-                      checked={formData.customerType === 'IICC'}
-                      onChange={handleInputChange}
-                    />
-                    <span className="radio-custom-dot" />
-                    IICC Customer
-                  </label>
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="customerType"
-                      value="NonIICC"
-                      checked={formData.customerType === 'NonIICC'}
-                      onChange={handleInputChange}
-                    />
-                    <span className="radio-custom-dot" />
-                    Non-IICC Customer
-                  </label>
-                </div>
-              </div>
-
-              {error && (
-                <div className="error-message">
-                  <MdError size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="btn-submit"
-                disabled={loading || !isRegistered}
-              >
-                {loading ? (
-                  'Sending...'
-                ) : !isRegistered ? (
-                  <>
-                    <MdLock size={16} /> Register First
-                  </>
-                ) : (
-                  <>
-                    <MdSend size={16} /> Send Query to Customer
-                  </>
-                )}
-              </button>
-            </form>
-          )}
+            <button className="cp-partner-change" onClick={handleChangePartner}><MdEdit size={12} /> Change</button>
+          </div>
+        )}
+        <div className="cp-section-title">
+          <MdPerson size={18} color="#f5c842" />
+          <span>Enter Customer Details</span>
+          <div className="cp-section-line"></div>
         </div>
-
-        <div className="agent-footer">
-          <p>
-            <MdLock size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} />
-            All data is secure and stored in your ERP system.
-          </p>
+        <form onSubmit={handleSubmit} className="cp-form">
+          <div className="cp-field">
+            <label>Customer Type (Religion) <span className="cp-required">*</span></label>
+            <select name="religion" value={formData.religion} onChange={handleChange} required>
+              <option value="">Select Religion</option>
+              <option value="M">Muslim (M)</option>
+              <option value="NM">Non-Muslim (NM)</option>
+            </select>
+            <small className="cp-hint">Determines greeting: Assalamu Alaikum or Warm Greetings</small>
+          </div>
+          <div className="cp-field">
+            <label><MdCake size={14} color="#888" /> Gender <span className="cp-optional">(Optional)</span></label>
+            <select name="gender" value={formData.gender} onChange={handleChange}>
+              <option value="">Select Gender</option>
+              <option value="Mr.">Mr.</option>
+              <option value="Ms.">Ms.</option>
+            </select>
+          </div>
+          <div className="cp-field">
+            <label><MdPerson size={14} color="#888" /> Customer Name <span className="cp-optional">(Optional)</span></label>
+            <input type="text" name="customerName" value={formData.customerName} onChange={handleChange} placeholder="Enter customer name" />
+          </div>
+          <div className="cp-field">
+            <label><MdPhone size={14} color="#888" /> Customer Contact Number <span className="cp-required">*</span></label>
+            <input type="tel" name="customerPhone" value={formData.customerPhone} onChange={handleChange} placeholder="e.g., 9876543210" required maxLength={10} />
+          </div>
+          <div className="cp-field">
+            <label><MdLocationOn size={14} color="#888" /> Customer Type</label>
+            <div className="cp-radio-group">
+              <label className={'cp-radio' + (formData.customerType === 'IICC' ? ' cp-radio-active' : '')}>
+                <input type="radio" name="customerType" value="IICC" checked={formData.customerType === 'IICC'} onChange={handleChange} />
+                <span className="cp-radio-dot"></span>
+                <span className="cp-radio-text">IICC Customer</span>
+              </label>
+              <label className={'cp-radio' + (formData.customerType === 'NonIICC' ? ' cp-radio-active' : '')}>
+                <input type="radio" name="customerType" value="NonIICC" checked={formData.customerType === 'NonIICC'} onChange={handleChange} />
+                <span className="cp-radio-dot"></span>
+                <span className="cp-radio-text">Non-IICC Customer</span>
+              </label>
+            </div>
+          </div>
+          {error && <div className="cp-error"><MdError size={16} /> {error}</div>}
+          {submitted && <div className="cp-success"><MdCheckCircle size={16} /> WhatsApp message sent successfully!</div>}
+          <button type="submit" className="cp-submit" disabled={submitting || !isRegistered}>
+            {!isRegistered ? 'Register First' : submitting ? 'Sending...' : 'Send Query to Customer'}
+          </button>
+        </form>
+        <div className="cp-footer">
+          <MdLock size={12} color="#666" />
+          <p>All data is secure and stored in your ERP system.</p>
         </div>
       </div>
     </div>
   );
 };
 
-export default AgentPage;
-
-
-
-
-
+export default ChannelPartner;

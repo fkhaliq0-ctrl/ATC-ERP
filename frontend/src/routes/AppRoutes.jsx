@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard/Dashboard';
-import AgentPage from '../pages/ChannelPartner';
+import ChannelPartner from '../pages/ChannelPartner';
 import SalesInvoice from '../pages/sales/SalesInvoice';
 import PurchaseInvoice from '../pages/purchase/PurchaseInvoice';
 import MenuSelection from '../pages/MenuSelection';
@@ -18,7 +18,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/agent" element={<AgentPage />} />
+      <Route path="/agent" element={<ChannelPartner />} />
       <Route path="/sales/invoice" element={<SalesInvoice />} />
       <Route path="/purchase/invoice" element={<PurchaseInvoice />} />
       <Route path="/menu-selection" element={<MenuSelection />} />

@@ -1,7 +1,7 @@
 ﻿from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
-from inventory import api_sales_invoice, api_dashboard
+from inventory import api_sales_invoice, api_dashboard`nfrom inventory import api_masters
 from inventory.models import Invoice
 from inventory.views_pdf import generate_pdf_api, customer_ledger_api
 
@@ -62,4 +62,9 @@ urlpatterns = [
     path('api/sales-invoices/', api_sales_invoice.create_invoice, name='sales_invoices'),
     path('api/generate-pdf/', generate_pdf_api, name='generate_pdf'),
     path('api/customer-ledger/<int:customer_id>/', customer_ledger_api, name='customer_ledger'),
+    path('api/vendors/', api_masters.get_vendors, name='vendors'),
+    path('api/items/', api_masters.get_items, name='items'),
+    path('api/taxes/', api_masters.get_taxes, name='taxes'),
+    path('api/units/', api_masters.get_units, name='units'),
 ]
+
